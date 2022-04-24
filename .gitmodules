@@ -1,0 +1,3 @@
+[submodule "external/better-enums"]
+	path = external/better-enums
+	url = git@github.com:aantron/better-enums.git

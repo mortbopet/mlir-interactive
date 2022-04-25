@@ -8,6 +8,8 @@
 #include "desevi/graph/BaseItem.h"
 
 class Edge;
+class QTimeLine;
+class QGraphicsItemAnimation;
 
 class NodeSocket : public BaseGraphicsItem<QGraphicsEllipseItem> {
   constexpr static double size = 15.0;
@@ -24,6 +26,10 @@ public:
   void setEdge(std::shared_ptr<Edge> edge);
   void clearEdge();
   bool isConnected() const { return static_cast<bool>(edge); }
+
+  /// Node type compatability check which also disallows self-connections and
+  /// in-in/out-out connections.
+  bool isCompatible(NodeSocket *socket);
   NodeType getType() const { return type; }
   void setType(NodeType type);
 
@@ -34,9 +40,18 @@ public:
 
   void createUI(QVBoxLayout *layout) override;
 
+  /// Called by the scene whenever an edge is being created and this socket is a
+  /// valid drop target.
+  void enableDropHighlight(bool enabled);
+
 protected:
   std::shared_ptr<Edge> edge;
   NodeType type;
+
+private:
+  QGraphicsEllipseItem *dropHighlight = nullptr;
+  QGraphicsItemAnimation *dropHighlightAnimation = nullptr;
+  QTimeLine *dropHighlightTimer = nullptr;
 };
 
 class NodeInputSocket : public NodeSocket {

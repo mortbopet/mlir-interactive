@@ -3,12 +3,14 @@
 
 #include <QBrush>
 #include <QColor>
+#include <QGraphicsItemAnimation>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPen>
+#include <QTimeLine>
 
 NodeSocket::NodeSocket(const QString &name, NodeType type,
                        QGraphicsItem *parent)
@@ -23,14 +25,41 @@ NodeSocket::NodeSocket(const QString &name, NodeType type,
   setZValue(1);
   setToolTip(name);
   setRect(-size / 2.0, -size / 2.0, size, size);
-
   setPen(QColor(Qt::black));
+
+  // Setup drop highlight
+  dropHighlight = new QGraphicsEllipseItem(this);
+  dropHighlight->setVisible(false);
+  constexpr int penSize = 3;
+  dropHighlight->setRect(rect().adjusted(-penSize, -penSize, penSize, penSize));
+  auto pen = QPen(Qt::yellow, penSize);
+  pen.setStyle(Qt::DotLine);
+  dropHighlight->setPen(pen);
+  dropHighlight->setZValue(0);
+
+  dropHighlightTimer = new QTimeLine(2000);
+  dropHighlightTimer->setLoopCount(0);
+  dropHighlightTimer->setFrameRange(0, 100);
+  dropHighlightTimer->setEasingCurve(QEasingCurve::Linear);
+
+  dropHighlightAnimation = new QGraphicsItemAnimation;
+  dropHighlightAnimation->setItem(dropHighlight);
+  dropHighlightAnimation->setTimeLine(dropHighlightTimer);
+  dropHighlightAnimation->setRotationAt(1.0, 360);
 }
 
 NodeSocket::~NodeSocket() {
   // Clear the edge before destroying this socket.
   if (edge)
     edge->erase();
+}
+
+void NodeSocket::enableDropHighlight(bool enabled) {
+  dropHighlight->setVisible(enabled);
+  if (enabled)
+    dropHighlightTimer->start();
+  else
+    dropHighlightTimer->stop();
 }
 
 NodeInputSocket::NodeInputSocket(const QString &name, NodeType type,
@@ -47,6 +76,28 @@ void NodeSocket::setEdge(std::shared_ptr<Edge> edge) {
 void NodeSocket::clearEdge() {
   assert(this->edge && "Socket has no edge");
   this->edge = nullptr;
+}
+
+template <typename TDerived, typename T1, typename T2>
+bool isSameDerived(T1 a, T2 b) {
+  return dynamic_cast<TDerived *>(a) && dynamic_cast<TDerived *>(b);
+}
+
+bool NodeSocket::isCompatible(NodeSocket *from) {
+  // Same node?
+  if (from->parentItem() == parentItem())
+    return false;
+
+  // Same direction?
+  if (isSameDerived<NodeInputSocket>(this, from) ||
+      isSameDerived<NodeOutputSocket>(this, from))
+    return false;
+
+  // Already connected?
+  if (getEdge())
+    return false;
+
+  return getType().isCompatible(from->getType());
 }
 
 void NodeSocket::setType(NodeType type) {
@@ -122,6 +173,7 @@ void NodeOutputSocket::mousePressEvent(QGraphicsSceneMouseEvent *event) {
   setEdge(edge);
   scene()->addItem(edge.get());
   connecting = true;
+  static_cast<Scene *>(scene())->highlightCompatibleSockets(this, getType());
 
   NodeSocket::mousePressEvent(event);
 }
@@ -139,7 +191,7 @@ void NodeOutputSocket::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
       if (socket->isConnected())
         continue;
 
-      if (socket->getType().isCompatible(getType())) {
+      if (socket->isCompatible(this)) {
         // Found a match!
         socket->setEdge(edge);
         edge->setEndSocket(socket);
@@ -158,5 +210,6 @@ void NodeOutputSocket::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
   }
 
   connecting = false;
+  static_cast<Scene *>(scene())->clearSocketHighlight();
   return NodeSocket::mouseReleaseEvent(event);
 }

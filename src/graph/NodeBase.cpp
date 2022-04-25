@@ -12,6 +12,7 @@ NodeBase::NodeBase(const QString &name, QGraphicsItem *parent)
   setFlag(ItemIsMovable);
   setCacheMode(DeviceCoordinateCache);
   setZValue(-1);
+  setBrush(Qt::white);
 
   textItem = new QGraphicsSimpleTextItem(this);
   setName(name);

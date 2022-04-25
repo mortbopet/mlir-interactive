@@ -27,13 +27,14 @@ void clearLayout(QLayout *layout) {
   }
 }
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(TransformsRegistry &registry, QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), registry(registry) {
   ui->setupUi(this);
 
   scene = new Scene(this);
   scene->setItemIndexMethod(QGraphicsScene::NoIndex);
   ui->graphicsView->setScene(scene);
+  scene->setBackgroundBrush(QColor(Qt::gray));
 
   // Mock file explorer
   fileModel = new QStandardItemModel(this);
@@ -101,22 +102,6 @@ void MainWindow::setupTransforms() {
   ui->transforms->setModel(transformsModel);
   connect(ui->transforms, &QListView::doubleClicked, this,
           &MainWindow::transformsDoubleClicked);
-
-  registry.registerTransformation<MLIRModuleLoader>();
-  registry.registerTransformation("Passthrough", NodeType(TypeKind::AnyMLIR),
-                                  NodeType(TypeKind::AnyMLIR));
-  registry.registerTransformation("mlir-clang",
-                                  NodeType({TypeKind::C, TypeKind::CPP}),
-                                  NodeType(TypeKind::AnyMLIR));
-  registry.registerTransformation("Affine to Standard",
-                                  NodeType(TypeKind::Affine),
-                                  NodeType(TypeKind::Standard));
-  registry.registerTransformation("Standard to Handshake",
-                                  NodeType(TypeKind::Standard),
-                                  NodeType(TypeKind::Handshake));
-  registry.registerTransformation("Handshake to FIRRTL",
-                                  NodeType(TypeKind::Handshake),
-                                  NodeType(TypeKind::FIRRTL));
 
   for (auto it : registry.getTransformations()) {
     auto *tx = new QStandardItem(it.first);

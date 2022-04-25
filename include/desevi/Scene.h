@@ -3,7 +3,10 @@
 #include <QGraphicsScene>
 #include <cereal/archives/json.hpp>
 
+#include "desevi/NodeTypes.h"
+
 class BaseItem;
+class NodeSocket;
 
 class Scene : public QGraphicsScene {
   Q_OBJECT
@@ -11,6 +14,9 @@ public:
   Scene(QObject *parent = nullptr);
 
   void requestFocus(BaseItem *item);
+
+  void highlightCompatibleSockets(NodeSocket *source, NodeType sourceType);
+  void clearSocketHighlight();
 
 signals:
   void focusItem(BaseItem *);
@@ -47,4 +53,7 @@ signals:
     }
   }
 */
+
+private:
+  std::vector<NodeSocket *> highlightedSockets;
 };

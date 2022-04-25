@@ -18,7 +18,7 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  MainWindow(QWidget *parent = nullptr);
+  MainWindow(TransformsRegistry &registry, QWidget *parent = nullptr);
   ~MainWindow();
 
 private:
@@ -36,7 +36,7 @@ private:
 
   Ui::MainWindow *ui;
   Scene *scene;
-  TransformsRegistry registry;
   QStandardItemModel *fileModel;
+  TransformsRegistry &registry;
 };
 #endif // MAINWINDOW_H

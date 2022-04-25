@@ -19,7 +19,7 @@ TypeKind FileNode::inferKindFromExtension(const QString &filename) {
   else if (extension == "c")
     return TypeKind::C;
   else
-    return TypeKind::None;
+    return TypeKind::AnyFile;
 }
 
 void FileNode::createUI(QVBoxLayout *layout) {

@@ -15,12 +15,12 @@
 #include "desevi/graph/MLIRModuleLoader.h"
 #include "desevi/graph/TransformNode.h"
 
-void clearLayout(QVBoxLayout *layout, bool inclusive) {
+void clearLayout(QLayout *layout) {
   // Clear focuslayout
   QLayoutItem *layoutItem;
   while ((layoutItem = layout->takeAt(0)) != nullptr) {
-    if (auto *subLayout = dynamic_cast<QVBoxLayout *>(layoutItem))
-      clearLayout(subLayout, true);
+    if (auto *subLayout = dynamic_cast<QLayout *>(layoutItem))
+      clearLayout(subLayout);
     delete layoutItem->widget();
     delete layoutItem;
   }
@@ -46,7 +46,8 @@ MainWindow::MainWindow(QWidget *parent)
 
   // Connect item focus changes to updates in the focus UI layout.
   connect(scene, &Scene::focusItem, this, [&](BaseItem *item) {
-    clearLayout(ui->focusLayout, false);
+    clearLayout(ui->focusLayout);
+
     auto subLayout = new QVBoxLayout();
     ui->focusLayout->addLayout(subLayout);
 
@@ -105,7 +106,9 @@ void MainWindow::setupTransforms() {
                                 NodeType(TypeKind::AnyMLIR), "mlir-clang"));
 
   for (auto it : registry.getTransformations()) {
-    transformsModel->appendRow(new QStandardItem(it.first));
+    auto *tx = new QStandardItem(it.first);
+    transformsModel->appendRow(tx);
+    tx->setFlags(tx->flags() & ~Qt::ItemIsEditable);
   }
 }
 

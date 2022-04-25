@@ -11,6 +11,8 @@ public:
 
   void setOutputType(const QString &type);
 
+  void createUI(QVBoxLayout *layout) override;
+
 private:
   QString outputType;
 };

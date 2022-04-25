@@ -61,7 +61,7 @@ QVariant NodeSocket::itemChange(QGraphicsItem::GraphicsItemChange change,
 
 void NodeSocket::createUI(QVBoxLayout *layout) {
   // Create a label and line edit showing the type of the socket.
-  auto *hlayout = new QHBoxLayout(layout->parentWidget());
+  auto *hlayout = new QHBoxLayout();
   auto typeLabel = new QLineEdit(type.toString());
   typeLabel->setReadOnly(true);
   hlayout->addWidget(new QLabel("Type:"));

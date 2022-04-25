@@ -1,6 +1,5 @@
 #pragma once
 
-#include "desevi/TransformsRegistry.h"
 #include "desevi/graph/NodeBase.h"
 
 #include <QString>

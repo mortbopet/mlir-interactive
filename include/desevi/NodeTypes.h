@@ -13,16 +13,19 @@ BETTER_ENUM(TypeKind, int,
             // File kinds
             AnyFile, C, CPP,
             // MLIR kinds
-            AnyMLIR, Affine, Handshake);
+            AnyMLIR, Affine, Handshake, Standard, FIRRTL);
 
 /// Not a huge fan of these functions - what's needed is a form of
 /// nested/hierarchical enums, which we don't have in C++. With this, things
 /// may be buggy if we forget to update the functions...
+/// A todo could be to let TypeKind be some form of statically initialized map
+/// of various sub-kinds.
 static inline std::set<TypeKind> fileKinds() {
   return {TypeKind::C, TypeKind::CPP};
 }
 static inline std::set<TypeKind> mlirKinds() {
-  return {TypeKind::Affine, TypeKind::Handshake};
+  return {TypeKind::Affine, TypeKind::Handshake, TypeKind::Standard,
+          TypeKind::FIRRTL};
 }
 
 /// Kinds which are not allowed to be mixed with any other kind.
@@ -43,8 +46,6 @@ public:
   bool operator==(const NodeType &other) const { return kinds == other.kinds; }
 
   QString toString() const;
-
-private:
   bool isUnaryKind() const {
     return kinds.size() == 1 && unaryKinds().count(*kinds.begin());
   }
@@ -54,5 +55,11 @@ private:
     return *kinds.begin();
   }
 
+  TypeKind getSingleKind() const {
+    assert(kinds.size() == 1);
+    return *kinds.begin();
+  }
+
+private:
   std::set<TypeKind> kinds;
 };

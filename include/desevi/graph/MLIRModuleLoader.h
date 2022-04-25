@@ -6,13 +6,10 @@
 /// post-loading be represented as a typed IR node.
 
 class MLIRModuleLoader : public NodeBase {
+  Q_OBJECT
 public:
   MLIRModuleLoader(QGraphicsItem *parent = nullptr);
-
-  void setOutputType(const QString &type);
-
+  void setOutputType(const TypeKind &type);
   void createUI(QVBoxLayout *layout) override;
-
-private:
-  QString outputType;
+  QString description() const override;
 };

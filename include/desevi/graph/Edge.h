@@ -11,7 +11,7 @@ public:
   void setEndSocket(NodeInputSocket *endSocket);
   NodeOutputSocket *getStartSocket() const { return startSocket; }
   NodeInputSocket *getEndSocket() const { return endSocket; }
-  void clear();
+  void erase();
 
   void drawLineBetweenSockets();
   void drawLineTo(QPointF pos);

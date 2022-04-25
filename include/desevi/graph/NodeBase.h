@@ -6,12 +6,14 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsSimpleTextItem>
 #include <QLayout>
+#include <QObject>
 
 #include <memory>
 #include <string>
 #include <vector>
 
 class NodeBase : public BaseGraphicsItem<QGraphicsRectItem> {
+  Q_OBJECT
 public:
   NodeBase(const QString &name = "", QGraphicsItem *parent = nullptr);
 
@@ -67,3 +69,5 @@ private:
   std::vector<std::shared_ptr<NodeSocket>> outputs;
   QGraphicsSimpleTextItem *textItem;
 };
+
+using NodeBuilder = std::function<NodeBase *()>;

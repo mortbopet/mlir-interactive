@@ -24,7 +24,7 @@ void Edge::drawLineTo(QPointF pos) {
           pos.y());
 }
 
-void Edge::clear() {
+void Edge::erase() {
   startSocket->clearEdge();
   if (endSocket)
     endSocket->clearEdge();

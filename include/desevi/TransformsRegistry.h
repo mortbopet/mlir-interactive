@@ -4,6 +4,9 @@
 #include <functional>
 #include <map>
 
+#include "desevi/NodeTypes.h"
+#include "desevi/graph/TransformNode.h"
+
 class NodeBase;
 
 namespace {
@@ -12,8 +15,6 @@ NodeBase *defaultBuilder() {
   return new T();
 }
 } // namespace
-
-using NodeBuilder = std::function<NodeBase *()>;
 
 class TransformsRegistry {
 public:
@@ -27,6 +28,12 @@ public:
   void registerTransformation(NodeBuilder builder = defaultBuilder<T>) {
     auto name = typeid(T).name();
     registerTransformation(name, builder);
+  }
+
+  void registerTransformation(const QString &name, NodeType input,
+                              NodeType output) {
+    registerTransformation(name,
+                           TransformNode::getBuilder(input, output, name));
   }
 
   const NodeBuilder &getBuilder(const QString &name) const {

@@ -25,6 +25,7 @@ public:
   void clearEdge();
   bool isConnected() const { return static_cast<bool>(edge); }
   NodeType getType() const { return type; }
+  void setType(NodeType type);
 
   template <class Archive>
   void serialize(Archive &ar) {

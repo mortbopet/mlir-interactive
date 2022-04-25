@@ -29,6 +29,7 @@ private:
 class SourceFileNode : public FileNode {
 public:
   SourceFileNode(const QString &filename, QGraphicsItem *parent = nullptr);
+  QString description() const override;
 
 private:
   std::shared_ptr<NodeSocket> outputSocket;

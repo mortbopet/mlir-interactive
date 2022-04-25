@@ -42,3 +42,5 @@ SourceFileNode::SourceFileNode(const QString &filename, QGraphicsItem *parent)
       addOutput("output", NodeType(inferKindFromExtension(filename)));
   setFilename(filename);
 }
+
+QString SourceFileNode::description() const { return "Loads a file."; }

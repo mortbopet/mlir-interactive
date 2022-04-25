@@ -9,7 +9,8 @@
 
 #include "desevi/Scene.h"
 
-class BaseItem {
+class BaseItem : public QObject {
+  Q_OBJECT
 public:
   BaseItem(const QString &name) : name(name) {}
   virtual ~BaseItem(){};
@@ -18,6 +19,7 @@ public:
 
   /// Creates the user interface for this node on layout.
   virtual void createUI(QVBoxLayout *layout) {}
+  virtual QString description() const { return QString(); }
 
 private:
   QString name;

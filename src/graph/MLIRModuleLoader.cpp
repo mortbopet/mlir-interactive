@@ -18,13 +18,29 @@ void MLIRModuleLoader::createUI(QVBoxLayout *layout) {
   for (auto t : mlirKinds()) {
     mlirTypeComboBox->addItem(t._to_string());
   }
+  connect(mlirTypeComboBox, &QComboBox::currentTextChanged, this,
+          [this](const QString &text) {
+            this->setOutputType(
+                TypeKind::_from_string(text.toStdString().c_str()));
+          });
 
   // Also allow AnyMLIR
   TypeKind anyMLIR = TypeKind::AnyMLIR;
   mlirTypeComboBox->addItem(anyMLIR._to_string());
 
+  mlirTypeComboBox->setCurrentText(
+      getOutputs().begin()->get()->getType().getSingleKind()._to_string());
+
   auto *hlayout = new QHBoxLayout();
   hlayout->addWidget(new QLabel("MLIR type:"));
   hlayout->addWidget(mlirTypeComboBox);
   layout->addLayout(hlayout);
+}
+
+void MLIRModuleLoader::setOutputType(const TypeKind &kind) {
+  getOutputs().begin()->get()->setType(NodeType(kind));
+}
+
+QString MLIRModuleLoader::description() const {
+  return "Loads an MLIR module from a file.";
 }

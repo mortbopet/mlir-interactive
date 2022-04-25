@@ -30,7 +30,7 @@ NodeSocket::NodeSocket(const QString &name, NodeType type,
 NodeSocket::~NodeSocket() {
   // Clear the edge before destroying this socket.
   if (edge)
-    edge->clear();
+    edge->erase();
 }
 
 NodeInputSocket::NodeInputSocket(const QString &name, NodeType type,
@@ -47,6 +47,21 @@ void NodeSocket::setEdge(std::shared_ptr<Edge> edge) {
 void NodeSocket::clearEdge() {
   assert(this->edge && "Socket has no edge");
   this->edge = nullptr;
+}
+
+void NodeSocket::setType(NodeType type) {
+  if (edge) {
+    // Clear the edge in case the new type does is incompatible.
+    NodeSocket *otherSocket =
+        edge->getEndSocket() == this
+            ? static_cast<NodeSocket *>(edge->getStartSocket())
+            : edge->getEndSocket();
+
+    if (!otherSocket->getType().isCompatible(type))
+      edge->erase();
+  }
+
+  this->type = type;
 }
 
 QVariant NodeSocket::itemChange(QGraphicsItem::GraphicsItemChange change,

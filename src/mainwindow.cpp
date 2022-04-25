@@ -5,6 +5,7 @@
 #include <QDirIterator>
 #include <QFileDialog>
 #include <QGraphicsView>
+#include <QLabel>
 #include <QListView>
 #include <QSpacerItem>
 #include <QStandardItemModel>
@@ -51,6 +52,13 @@ MainWindow::MainWindow(QWidget *parent)
     auto subLayout = new QVBoxLayout();
     ui->focusLayout->addLayout(subLayout);
 
+    QString description = item->description();
+    if (!description.isEmpty()) {
+      auto *descriptionLabel = new QLabel(description);
+      descriptionLabel->setWordWrap(true);
+      subLayout->addWidget(descriptionLabel);
+    }
+
     if (item)
       item->createUI(subLayout);
 
@@ -95,15 +103,20 @@ void MainWindow::setupTransforms() {
           &MainWindow::transformsDoubleClicked);
 
   registry.registerTransformation<MLIRModuleLoader>();
-  registry.registerTransformation(
-      "Passthrough",
-      TransformNode::getBuilder(NodeType(TypeKind::AnyMLIR),
-                                NodeType(TypeKind::AnyMLIR), "Passthrough"));
-
-  registry.registerTransformation(
-      "mlir-clang",
-      TransformNode::getBuilder(NodeType({TypeKind::C, TypeKind::CPP}),
-                                NodeType(TypeKind::AnyMLIR), "mlir-clang"));
+  registry.registerTransformation("Passthrough", NodeType(TypeKind::AnyMLIR),
+                                  NodeType(TypeKind::AnyMLIR));
+  registry.registerTransformation("mlir-clang",
+                                  NodeType({TypeKind::C, TypeKind::CPP}),
+                                  NodeType(TypeKind::AnyMLIR));
+  registry.registerTransformation("Affine to Standard",
+                                  NodeType(TypeKind::Affine),
+                                  NodeType(TypeKind::Standard));
+  registry.registerTransformation("Standard to Handshake",
+                                  NodeType(TypeKind::Standard),
+                                  NodeType(TypeKind::Handshake));
+  registry.registerTransformation("Handshake to FIRRTL",
+                                  NodeType(TypeKind::Handshake),
+                                  NodeType(TypeKind::FIRRTL));
 
   for (auto it : registry.getTransformations()) {
     auto *tx = new QStandardItem(it.first);

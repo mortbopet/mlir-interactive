@@ -71,11 +71,13 @@ NodeInputSocket::NodeInputSocket(const QString &name, NodeType type,
 void NodeSocket::setEdge(std::shared_ptr<Edge> edge) {
   assert(!this->edge && "Socket already has an edge");
   this->edge = edge;
+  connectionChanged();
 }
 
 void NodeSocket::clearEdge() {
   assert(this->edge && "Socket has no edge");
   this->edge = nullptr;
+  connectionChanged();
 }
 
 template <typename TDerived, typename T1, typename T2>

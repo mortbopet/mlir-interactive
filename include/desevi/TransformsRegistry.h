@@ -31,9 +31,10 @@ public:
   }
 
   void registerTransformation(const QString &name, NodeType input,
-                              NodeType output) {
-    registerTransformation(name,
-                           TransformNode::getBuilder(input, output, name));
+                              NodeType output,
+                              const PassManagerNester &nester) {
+    registerTransformation(
+        name, TransformNode::getBuilder(input, output, name, nester));
   }
 
   const NodeBuilder &getBuilder(const QString &name) const {

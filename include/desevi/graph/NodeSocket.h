@@ -12,6 +12,7 @@ class QTimeLine;
 class QGraphicsItemAnimation;
 
 class NodeSocket : public BaseGraphicsItem<QGraphicsEllipseItem> {
+  Q_OBJECT
   constexpr static double size = 15.0;
 
 public:
@@ -43,6 +44,9 @@ public:
   /// Called by the scene whenever an edge is being created and this socket is a
   /// valid drop target.
   void enableDropHighlight(bool enabled);
+
+signals:
+  void connectionChanged();
 
 protected:
   std::shared_ptr<Edge> edge;

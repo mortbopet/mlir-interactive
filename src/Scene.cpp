@@ -5,7 +5,7 @@
 
 Scene::Scene(QObject *parent) : QGraphicsScene(parent) {}
 
-void Scene::requestFocus(BaseItem *node) { emit focusItem(node); }
+void Scene::requestFocus(BaseItem *node) { focusItem(node); }
 
 void Scene::highlightCompatibleSockets(NodeSocket *source,
                                        NodeType sourceType) {

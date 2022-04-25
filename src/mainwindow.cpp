@@ -2,11 +2,14 @@
 #include "ui_mainwindow.h"
 
 #include <QAction>
+#include <QDirIterator>
+#include <QFileDialog>
 #include <QGraphicsView>
 #include <QListView>
 #include <QStandardItemModel>
 #include <QToolBar>
 
+#include "desevi/Scene.h"
 #include "desevi/graph/MLIRModuleLoader.h"
 #include "desevi/graph/TransformNode.h"
 
@@ -14,22 +17,30 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
-  scene = new QGraphicsScene(this);
+  scene = new Scene(this);
   scene->setItemIndexMethod(QGraphicsScene::NoIndex);
   ui->graphicsView->setScene(scene);
 
   // Mock file explorer
-  auto *fileModel = new QStandardItemModel(this);
+  fileModel = new QStandardItemModel(this);
   ui->explorer->setModel(fileModel);
-  auto *dummyItem = new QStandardItem("dummyfile.cpp");
-  dummyItem->setFlags(dummyItem->flags() & ~Qt::ItemIsEditable);
-  fileModel->setItem(0, 0, dummyItem);
 
   connect(ui->explorer, &QTreeView::doubleClicked, this,
           &MainWindow::explorerDoubleClicked);
 
   setupTransforms();
   setupActions();
+
+  // Connect node focus changes to updates in the focus UI layout.
+  connect(scene, &Scene::focusNode, this, [&](BaseItem *node) {
+    // Clear focuslayout
+    while (ui->focusLayout->count() > 0) {
+      delete ui->focusLayout->takeAt(0);
+    }
+
+    if (node)
+      node->createUI(ui->focusLayout);
+  });
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -53,6 +64,11 @@ void MainWindow::setupActions() {
 
   runAction = new QAction("Run", this);
   toolbar->addAction(runAction);
+
+  openFolderAction = new QAction("Open Folder", this);
+  ui->menuFile->addAction(openFolderAction);
+  connect(openFolderAction, &QAction::triggered, this,
+          &MainWindow::openFolderClicked);
 }
 
 void MainWindow::setupTransforms() {
@@ -76,4 +92,22 @@ void MainWindow::transformsDoubleClicked(const QModelIndex &index) {
   // Create a new transform node.
   auto *node = registry.getBuilder(index.data().toString())();
   scene->addItem(node);
+}
+
+void MainWindow::openFolderClicked() {
+  QString folder = QFileDialog::getExistingDirectory(this, "Open Folder");
+  if (folder.isEmpty())
+    return;
+
+  // Create entries for the files in the directory in the file explorer.
+  fileModel->clear();
+  QDirIterator it(folder, QDirIterator::Subdirectories);
+  while (it.hasNext()) {
+    it.next();
+    if (it.fileInfo().isFile()) {
+      auto *item = new QStandardItem(it.fileInfo().absoluteFilePath());
+      item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+      fileModel->appendRow(item);
+    }
+  }
 }

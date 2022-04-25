@@ -5,10 +5,11 @@
 #include <memory>
 
 #include "desevi/NodeTypes.h"
+#include "desevi/graph/BaseItem.h"
 
 class Edge;
 
-class NodeSocket : public QGraphicsEllipseItem {
+class NodeSocket : public BaseGraphicsItem<QGraphicsEllipseItem> {
   constexpr static double size = 15.0;
 
 public:
@@ -23,6 +24,11 @@ public:
   void clearEdge();
   bool isConnected() const { return static_cast<bool>(edge); }
   NodeType getType() const { return type; }
+
+  template <class Archive>
+  void serialize(Archive &ar) {
+    ar(type);
+  }
 
 protected:
   std::shared_ptr<Edge> edge;

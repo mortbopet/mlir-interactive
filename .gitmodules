@@ -1,3 +1,6 @@
 [submodule "external/better-enums"]
 	path = external/better-enums
 	url = git@github.com:aantron/better-enums.git
+[submodule "external/cereal"]
+	path = external/cereal
+	url = git@github.com:USCiLab/cereal.git

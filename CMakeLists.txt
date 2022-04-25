@@ -28,6 +28,8 @@ set(PROJECT_SOURCES
 add_executable(Desevi ${PROJECT_SOURCES})
 target_include_directories(Desevi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(Desevi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external)
-
-
 target_link_libraries(Desevi PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+
+
+add_subdirectory(external)
+target_include_directories(Desevi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/cereal/include)

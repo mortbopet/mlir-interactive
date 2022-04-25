@@ -1,15 +1,17 @@
 #pragma once
 
+#include "desevi/graph/BaseItem.h"
 #include "desevi/graph/NodeSocket.h"
 
 #include <QGraphicsRectItem>
 #include <QGraphicsSimpleTextItem>
+#include <QLayout>
 
 #include <memory>
 #include <string>
 #include <vector>
 
-class NodeBase : public QGraphicsRectItem {
+class NodeBase : public BaseGraphicsItem<QGraphicsRectItem> {
 public:
   NodeBase(const QString &name = "", QGraphicsItem *parent = nullptr);
 
@@ -44,8 +46,14 @@ public:
     return socket;
   }
 
-  /// Set the node name.
-  void setNodeName(const QString &name);
+  template <class Archive>
+  void serialize(Archive &ar) {
+    auto name = getName();
+    ar(name);
+    setName(name);
+  }
+
+  void setName(const QString &name) override;
 
 protected:
   /// Adjusts the position of input- and output sockets.

@@ -9,7 +9,7 @@
 
 NodeSocket::NodeSocket(const QString &name, NodeType type,
                        QGraphicsItem *parent)
-    : QGraphicsEllipseItem(parent), type(type) {
+    : BaseGraphicsItem<QGraphicsEllipseItem>(name, parent), type(type) {
   setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
   setFlag(QGraphicsItem::ItemIsMovable, false);
   setFlag(QGraphicsItem::ItemIsSelectable, true);

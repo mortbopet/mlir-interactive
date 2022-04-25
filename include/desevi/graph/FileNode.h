@@ -2,12 +2,23 @@
 
 #include "desevi/graph/NodeBase.h"
 
+#include "cereal/cereal.hpp"
+
+#include <cereal/types/polymorphic.hpp>
+
 #include <QString>
 
 class FileNode : public NodeBase {
 public:
   using NodeBase::NodeBase;
   void setFilename(const QString &filename);
+
+  void createUI(QLayout *layout) override;
+
+  template <class Archive>
+  void serialize(Archive &ar) {
+    // ar(cereal::base_class<NodeBase>(this), filename);
+  }
 
 private:
   QString filename;
@@ -20,3 +31,5 @@ public:
 private:
   std::shared_ptr<NodeSocket> outputSocket;
 };
+
+CEREAL_REGISTER_TYPE(FileNode);

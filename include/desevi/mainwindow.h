@@ -6,13 +6,13 @@
 #include "desevi/TransformsRegistry.h"
 #include "desevi/graph/FileNode.h"
 
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
-}
+QT_BEGIN_NAMESPACE namespace Ui { class MainWindow; }
 class QGraphicsScene;
 class QAction;
+class QStandardItemModel;
 QT_END_NAMESPACE
+
+class Scene;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -26,14 +26,17 @@ private:
   void transformsDoubleClicked(const QModelIndex &index);
   void setupTransforms();
   void setupActions();
+  void openFolderClicked();
 
   /// When enabled, the pipeline will be execute on every change.
   QAction *interactiveAction = nullptr;
   /// Executes the pipeline.
   QAction *runAction = nullptr;
+  QAction *openFolderAction = nullptr;
 
   Ui::MainWindow *ui;
-  QGraphicsScene *scene;
+  Scene *scene;
   TransformsRegistry registry;
+  QStandardItemModel *fileModel;
 };
 #endif // MAINWINDOW_H

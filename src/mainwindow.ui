@@ -70,11 +70,11 @@
       <widget class="QTabWidget" name="tabWidget_2">
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
-         <string>IR</string>
+         <string>Click something</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_4">
          <item row="0" column="0">
-          <widget class="QTextEdit" name="textEdit"/>
+          <layout class="QVBoxLayout" name="focusLayout"/>
          </item>
         </layout>
        </widget>

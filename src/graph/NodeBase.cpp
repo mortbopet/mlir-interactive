@@ -1,21 +1,22 @@
 #include "desevi/graph/NodeBase.h"
+#include "desevi/Scene.h"
+
+#include "cereal/cereal.hpp"
 
 #include <QBrush>
 
 NodeBase::NodeBase(const QString &name, QGraphicsItem *parent)
-    : QGraphicsRectItem(parent) {
-
-  setFlag(ItemIsSelectable);
+    : BaseGraphicsItem<QGraphicsRectItem>(name, parent) {
   setFlag(ItemIsMovable);
-  setFlag(ItemSendsGeometryChanges);
   setCacheMode(DeviceCoordinateCache);
   setZValue(-1);
 
   textItem = new QGraphicsSimpleTextItem(this);
-  setNodeName(name);
+  setName(name);
 }
 
-void NodeBase::setNodeName(const QString &name) {
+void NodeBase::setName(const QString &name) {
+  BaseItem::setName(name);
   textItem->setText(name);
   auto br = textItem->boundingRect();
   br.moveTo(-br.width() / 2, -br.height() / 2);

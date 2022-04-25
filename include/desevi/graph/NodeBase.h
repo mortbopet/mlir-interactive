@@ -15,6 +15,8 @@ class NodeBase : public BaseGraphicsItem<QGraphicsRectItem> {
 public:
   NodeBase(const QString &name = "", QGraphicsItem *parent = nullptr);
 
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
+
   /// Returns the input sockets of the node.
   const std::vector<std::shared_ptr<NodeSocket>> &getInputs() const {
     return inputs;

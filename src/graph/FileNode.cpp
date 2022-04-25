@@ -12,7 +12,17 @@ void FileNode::setFilename(const QString &filename) {
   setName(baseFilename);
 }
 
-void FileNode::createUI(QLayout *layout) {
+TypeKind FileNode::inferKindFromExtension(const QString &filename) {
+  QString extension = QFileInfo(filename).suffix();
+  if (extension == "cpp")
+    return TypeKind::CPP;
+  else if (extension == "c")
+    return TypeKind::C;
+  else
+    return TypeKind::None;
+}
+
+void FileNode::createUI(QVBoxLayout *layout) {
   auto *textViewer = new QPlainTextEdit();
   textViewer->setReadOnly(true);
   QFile file(filename);
@@ -20,12 +30,15 @@ void FileNode::createUI(QLayout *layout) {
     QTextStream in(&file);
     textViewer->setPlainText(in.readAll());
   }
+  textViewer->setSizePolicy(QSizePolicy::MinimumExpanding,
+                            QSizePolicy::MinimumExpanding);
   layout->addWidget(textViewer);
 }
 
 SourceFileNode::SourceFileNode(const QString &filename, QGraphicsItem *parent)
     : FileNode("", parent) {
   // Add an output socket representing the file.
-  outputSocket = addOutput("output", NodeType::File);
+  outputSocket =
+      addOutput("output", NodeType(inferKindFromExtension(filename)));
   setFilename(filename);
 }

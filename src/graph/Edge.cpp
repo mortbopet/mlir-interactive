@@ -23,3 +23,11 @@ void Edge::drawLineTo(QPointF pos) {
   setLine(startSocket->scenePos().x(), startSocket->scenePos().y(), pos.x(),
           pos.y());
 }
+
+void Edge::clear() {
+  startSocket->clearEdge();
+  if (endSocket)
+    endSocket->clearEdge();
+  startSocket = nullptr;
+  endSocket = nullptr;
+}

@@ -4,6 +4,8 @@
 #include "cereal/cereal.hpp"
 
 #include <QBrush>
+#include <QGraphicsSceneContextMenuEvent>
+#include <QMenu>
 
 NodeBase::NodeBase(const QString &name, QGraphicsItem *parent)
     : BaseGraphicsItem<QGraphicsRectItem>(name, parent) {
@@ -42,4 +44,13 @@ void NodeBase::updateSockets() {
     socket->setPos(0, y);
     indent += botDiff;
   }
+}
+
+void NodeBase::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {
+  auto menu = new QMenu();
+  menu->addAction("Delete", [this]() {
+    static_cast<Scene *>(scene())->removeItem(this);
+    delete this;
+  });
+  menu->exec(event->screenPos());
 }

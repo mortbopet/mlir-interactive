@@ -10,10 +10,10 @@ class Scene : public QGraphicsScene {
 public:
   Scene(QObject *parent = nullptr);
 
-  void requestFocus(BaseItem *node);
+  void requestFocus(BaseItem *item);
 
 signals:
-  void focusNode(BaseItem *);
+  void focusItem(BaseItem *);
 
   /*
   template <class Archive>

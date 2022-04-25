@@ -13,12 +13,14 @@ public:
   using NodeBase::NodeBase;
   void setFilename(const QString &filename);
 
-  void createUI(QLayout *layout) override;
+  void createUI(QVBoxLayout *layout) override;
 
   template <class Archive>
   void serialize(Archive &ar) {
     // ar(cereal::base_class<NodeBase>(this), filename);
   }
+
+  static TypeKind inferKindFromExtension(const QString &filename);
 
 private:
   QString filename;

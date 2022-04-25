@@ -25,6 +25,6 @@ public:
   }
 
 private:
-  NodeType inputType = NodeType::Unset;
-  NodeType outputType = NodeType::Unset;
+  NodeType inputType = NodeType(TypeKind::None);
+  NodeType outputType = NodeType(TypeKind::None);
 };

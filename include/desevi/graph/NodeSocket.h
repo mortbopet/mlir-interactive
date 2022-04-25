@@ -15,9 +15,10 @@ class NodeSocket : public BaseGraphicsItem<QGraphicsEllipseItem> {
 public:
   NodeSocket(const QString &name, NodeType type,
              QGraphicsItem *parent = nullptr);
+  ~NodeSocket() override;
 
   QVariant itemChange(QGraphicsItem::GraphicsItemChange change,
-                      const QVariant &value);
+                      const QVariant &value) override;
 
   const std::shared_ptr<Edge> &getEdge() { return edge; }
   void setEdge(std::shared_ptr<Edge> edge);
@@ -30,6 +31,8 @@ public:
     ar(type);
   }
 
+  void createUI(QVBoxLayout *layout) override;
+
 protected:
   std::shared_ptr<Edge> edge;
   NodeType type;
@@ -41,7 +44,6 @@ public:
   NodeInputSocket(const QString &name, NodeType type,
                   QGraphicsItem *parent = nullptr);
   void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-  void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 };
 
 class NodeOutputSocket : public NodeSocket {

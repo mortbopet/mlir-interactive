@@ -6,12 +6,25 @@
 #include <QFileDialog>
 #include <QGraphicsView>
 #include <QListView>
+#include <QSpacerItem>
 #include <QStandardItemModel>
 #include <QToolBar>
+#include <QVBoxLayout>
 
 #include "desevi/Scene.h"
 #include "desevi/graph/MLIRModuleLoader.h"
 #include "desevi/graph/TransformNode.h"
+
+void clearLayout(QVBoxLayout *layout, bool inclusive) {
+  // Clear focuslayout
+  QLayoutItem *layoutItem;
+  while ((layoutItem = layout->takeAt(0)) != nullptr) {
+    if (auto *subLayout = dynamic_cast<QVBoxLayout *>(layoutItem))
+      clearLayout(subLayout, true);
+    delete layoutItem->widget();
+    delete layoutItem;
+  }
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -31,15 +44,18 @@ MainWindow::MainWindow(QWidget *parent)
   setupTransforms();
   setupActions();
 
-  // Connect node focus changes to updates in the focus UI layout.
-  connect(scene, &Scene::focusNode, this, [&](BaseItem *node) {
-    // Clear focuslayout
-    while (ui->focusLayout->count() > 0) {
-      delete ui->focusLayout->takeAt(0);
-    }
+  // Connect item focus changes to updates in the focus UI layout.
+  connect(scene, &Scene::focusItem, this, [&](BaseItem *item) {
+    clearLayout(ui->focusLayout, false);
+    auto subLayout = new QVBoxLayout();
+    ui->focusLayout->addLayout(subLayout);
 
-    if (node)
-      node->createUI(ui->focusLayout);
+    if (item)
+      item->createUI(subLayout);
+
+    // subLayout->addSpacing(1);
+    ui->focusLayout->addSpacerItem(new QSpacerItem(
+        1, 1, QSizePolicy::Minimum, QSizePolicy::MinimumExpanding));
   });
 }
 
@@ -80,7 +96,13 @@ void MainWindow::setupTransforms() {
   registry.registerTransformation<MLIRModuleLoader>();
   registry.registerTransformation(
       "Passthrough",
-      TransformNode::getBuilder(NodeType::Any, NodeType::Any, "Passthrough"));
+      TransformNode::getBuilder(NodeType(TypeKind::AnyMLIR),
+                                NodeType(TypeKind::AnyMLIR), "Passthrough"));
+
+  registry.registerTransformation(
+      "mlir-clang",
+      TransformNode::getBuilder(NodeType({TypeKind::C, TypeKind::CPP}),
+                                NodeType(TypeKind::AnyMLIR), "mlir-clang"));
 
   for (auto it : registry.getTransformations()) {
     transformsModel->appendRow(new QStandardItem(it.first));

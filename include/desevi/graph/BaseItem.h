@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QGraphicsItem>
-#include <QLayout>
+#include <QVBoxLayout>
 
 #include <memory>
 #include <string>
@@ -12,11 +12,12 @@
 class BaseItem {
 public:
   BaseItem(const QString &name) : name(name) {}
+  virtual ~BaseItem(){};
   virtual void setName(const QString &name) { this->name = name; }
   QString getName() const { return name; }
 
   /// Creates the user interface for this node on layout.
-  virtual void createUI(QLayout *layout) {}
+  virtual void createUI(QVBoxLayout *layout) {}
 
 private:
   QString name;

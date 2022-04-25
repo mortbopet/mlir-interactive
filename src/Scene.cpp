@@ -2,4 +2,4 @@
 
 Scene::Scene(QObject *parent) : QGraphicsScene(parent) {}
 
-void Scene::requestFocus(BaseItem *node) { emit focusNode(node); }
+void Scene::requestFocus(BaseItem *node) { emit focusItem(node); }

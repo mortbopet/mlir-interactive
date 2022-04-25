@@ -5,6 +5,9 @@
 #include <QColor>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
 #include <QPen>
 
 NodeSocket::NodeSocket(const QString &name, NodeType type,
@@ -22,6 +25,12 @@ NodeSocket::NodeSocket(const QString &name, NodeType type,
   setRect(-size / 2.0, -size / 2.0, size, size);
 
   setPen(QColor(Qt::black));
+}
+
+NodeSocket::~NodeSocket() {
+  // Clear the edge before destroying this socket.
+  if (edge)
+    edge->clear();
 }
 
 NodeInputSocket::NodeInputSocket(const QString &name, NodeType type,
@@ -47,22 +56,29 @@ QVariant NodeSocket::itemChange(QGraphicsItem::GraphicsItemChange change,
       edge->drawLineBetweenSockets();
     }
   }
-  return QGraphicsEllipseItem::itemChange(change, value);
+  return BaseGraphicsItem<QGraphicsEllipseItem>::itemChange(change, value);
+}
+
+void NodeSocket::createUI(QVBoxLayout *layout) {
+  // Create a label and line edit showing the type of the socket.
+  auto *hlayout = new QHBoxLayout(layout->parentWidget());
+  auto typeLabel = new QLineEdit(type.toString());
+  typeLabel->setReadOnly(true);
+  hlayout->addWidget(new QLabel("Type:"));
+  hlayout->addWidget(typeLabel);
+  layout->addLayout(hlayout);
 }
 
 void NodeInputSocket::mousePressEvent(QGraphicsSceneMouseEvent *event) {
   if (!isConnected())
-    return;
+    return NodeSocket::mousePressEvent(event);
 
   // Forward the event to the output socket of the connected edge.
   auto edge = this->edge.get();
   auto outputSocket = edge->getStartSocket();
   outputSocket->clearEdge();
   clearEdge();
-}
-
-void NodeInputSocket::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-  // Do nothing; logic is contained in the output socket.
+  return NodeSocket::mousePressEvent(event);
 }
 
 NodeOutputSocket::NodeOutputSocket(const QString &name, NodeType type,
@@ -81,9 +97,8 @@ void NodeOutputSocket::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void NodeOutputSocket::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-
   if (isConnected()) {
-    QGraphicsItem::mousePressEvent(event);
+    NodeSocket::mousePressEvent(event);
     return;
   }
 
@@ -93,12 +108,12 @@ void NodeOutputSocket::mousePressEvent(QGraphicsSceneMouseEvent *event) {
   scene()->addItem(edge.get());
   connecting = true;
 
-  QGraphicsItem::mousePressEvent(event);
+  NodeSocket::mousePressEvent(event);
 }
 
 void NodeOutputSocket::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
   if (!connecting)
-    return;
+    return NodeSocket::mouseReleaseEvent(event);
 
   // Find any NodeInputSocket that is under the mouse cursor. If it is
   // unconnected and matches the type of this output socket, connect them.
@@ -109,7 +124,7 @@ void NodeOutputSocket::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
       if (socket->isConnected())
         continue;
 
-      if (socket->getType() == getType()) {
+      if (socket->getType().isCompatible(getType())) {
         // Found a match!
         socket->setEdge(edge);
         edge->setEndSocket(socket);
@@ -128,4 +143,5 @@ void NodeOutputSocket::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
   }
 
   connecting = false;
+  return NodeSocket::mouseReleaseEvent(event);
 }

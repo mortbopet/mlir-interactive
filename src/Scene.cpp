@@ -33,3 +33,12 @@ std::optional<IRState> Scene::getIRStateForItem(BaseItem *item) {
 }
 
 void Scene::graphChanged() { executer.execute(*this); }
+
+void Scene::executionFinished() {
+  for (auto *item : items()) {
+    auto *node = dynamic_cast<NodeBase *>(item);
+    if (!node)
+      continue;
+    node->updateDrawState();
+  }
+}

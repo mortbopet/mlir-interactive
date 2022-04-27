@@ -87,11 +87,16 @@ public:
 
   void createUI(QVBoxLayout *layout) override;
 
+  /// Updates the state of the item based on the IRState registered for the
+  /// item.
+  virtual void updateDrawState();
+
 protected:
   /// Adjusts the position of input- and output sockets.
   void updateSockets();
 
 private:
+  QGraphicsPixmapItem *warningItem = nullptr;
   std::vector<std::shared_ptr<NodeSocket>> sockets;
   std::vector<std::shared_ptr<NodeSocket>> inputs;
   std::vector<std::shared_ptr<NodeSocket>> outputs;

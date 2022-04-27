@@ -28,6 +28,10 @@ public:
   /// occurs.
   void graphChanged();
 
+  /// Called after a pass execution cycle has finished, and the UI should be
+  /// updated to reflect the resulting state.
+  void executionFinished();
+
 signals:
   void focusItem(BaseItem *);
 

@@ -34,6 +34,8 @@ MainWindow::MainWindow(mlir::MLIRContext &context, TransformsRegistry &registry,
     : QMainWindow(parent), ui(new Ui::MainWindow), registry(registry) {
   ui->setupUi(this);
 
+  Q_INIT_RESOURCE(icons);
+
   executer = std::make_unique<PassExecuter>(context);
   scene = new Scene(*executer, this);
   scene->setItemIndexMethod(QGraphicsScene::NoIndex);

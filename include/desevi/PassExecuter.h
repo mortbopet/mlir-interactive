@@ -28,4 +28,7 @@ private:
   void executeNode(NodeBase *node, InflightResultBase *input);
   std::map<void *, IRState> IRStates;
   mlir::MLIRContext &context;
+
+  // Handle for storing intercepted diagnostics information.
+  QString diagnostic;
 };

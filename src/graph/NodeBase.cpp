@@ -5,6 +5,7 @@
 #include "cereal/cereal.hpp"
 
 #include <QBrush>
+#include <QGraphicsPixmapItem>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QMenu>
 #include <QPlainTextEdit>
@@ -70,4 +71,26 @@ void NodeBase::createUI(QVBoxLayout *layout) {
   }
 
   BaseItem::createUI(layout);
+}
+
+void NodeBase::updateDrawState() {
+  auto irState = static_cast<Scene *>(scene())->getIRStateForItem(this);
+
+  if (!irState.has_value() || !irState->isError()) {
+    if (warningItem)
+      delete warningItem;
+  } else {
+    // Scale the warningItem based on the font size (which scales to the DPI of
+    // the screen).
+    QSizeF sizeGuide = QSizeF(QFontMetrics(textItem->font())
+                                  .boundingRect(QStringLiteral("!"))
+                                  .size()) *
+                       1.5;
+    warningItem = new QGraphicsPixmapItem(
+        QIcon(":/icons/warning.svg")
+            .pixmap(sizeGuide.height(), sizeGuide.height()),
+        this);
+    int d = warningItem->boundingRect().height() / 2;
+    warningItem->setPos(rect().topLeft() - QPointF(d, d));
+  }
 }

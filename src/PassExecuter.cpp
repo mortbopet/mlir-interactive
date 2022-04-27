@@ -5,16 +5,31 @@
 
 #include "mlir/IR/MLIRContext.h"
 #include "llvm/ADT/STLExtras.h"
+#include <QStringList>
 
 using namespace mlir;
 
-PassExecuter::PassExecuter(mlir::MLIRContext &context) : context(context) {}
+PassExecuter::PassExecuter(mlir::MLIRContext &context) : context(context) {
+  // Install a diagnostics handler to intersect info/error output.
+  context.getDiagEngine().registerHandler([this](mlir::Diagnostic &diag) {
+    if (diag.getSeverity() == mlir::DiagnosticSeverity::Error) {
+      std::string err;
+      llvm::raw_string_ostream os(err);
+      os << diag.getLocation() << ": " << diag;
+      this->diagnostic = QString::fromStdString(err);
+      return success();
+    }
+    return failure();
+  });
+}
 
 void PassExecuter::executeNode(NodeBase *node, InflightResultBase *input) {
   auto result = node->process(ProcessInput{context, input});
   if (failed(result)) {
-    IRStates[node] =
-        IRState(QString::fromStdString(result.getError()), /*isError=*/true);
+    QString errorMessage = QString::fromStdString(result.getError());
+    errorMessage += "\n" + diagnostic;
+    IRStates[node] = IRState(errorMessage, /*isError=*/true);
+    diagnostic.clear();
   } else {
     // Gather IR state and continue execution through output sockets
     for (auto &&[outputSocket, outputRes] : result.getValue()) {
@@ -46,6 +61,8 @@ void PassExecuter::execute(Scene &scene) {
   // Go execute!
   for (auto *sourceNode : sourceNodes)
     executeNode(sourceNode, nullptr);
+
+  scene.executionFinished();
 }
 
 std::optional<IRState> PassExecuter::getState(void *item) {

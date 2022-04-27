@@ -1,4 +1,5 @@
 #include "desevi/graph/NodeBase.h"
+#include "desevi/IRState.h"
 #include "desevi/Scene.h"
 
 #include "cereal/cereal.hpp"
@@ -6,6 +7,7 @@
 #include <QBrush>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QMenu>
+#include <QPlainTextEdit>
 
 NodeBase::NodeBase(const QString &name, QGraphicsItem *parent)
     : BaseGraphicsItem<QGraphicsRectItem>(name, parent) {
@@ -23,8 +25,8 @@ void NodeBase::setName(const QString &name) {
   textItem->setText(name);
   auto br = textItem->boundingRect();
   br.moveTo(-br.width() / 2, -br.height() / 2);
-  textItem->setPos(QPointF(-br.width() / 3, -br.height() / 2));
-  setRect(br.adjusted(-br.width() / 3, -br.height() / 2, br.width() / 2,
+  textItem->setPos(QPointF(-br.width() / 2, -br.height() / 2));
+  setRect(br.adjusted(-br.height() / 3, -br.height() / 2, br.height() / 2,
                       br.height() / 2));
   updateSockets();
 }
@@ -50,8 +52,22 @@ void NodeBase::updateSockets() {
 void NodeBase::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {
   auto menu = new QMenu();
   menu->addAction("Delete", [this]() {
-    static_cast<Scene *>(scene())->removeItem(this);
+    Scene *_scene = static_cast<Scene *>(scene());
+    _scene->removeItem(this);
     delete this;
+    _scene->graphChanged();
   });
   menu->exec(event->screenPos());
+}
+
+void NodeBase::createUI(QVBoxLayout *layout) {
+  // Report any error informatiomn related to this pass.
+  auto state = static_cast<Scene *>(scene())->getIRStateForItem(this);
+  if (state.has_value() && state->isError()) {
+    auto errorTextEdit = new QPlainTextEdit();
+    errorTextEdit->setPlainText(state.value().getError());
+    layout->addWidget(errorTextEdit);
+  }
+
+  BaseItem::createUI(layout);
 }

@@ -1,8 +1,7 @@
 #pragma once
 
-#include "desevi/graph/NodeBase.h"
-
 #include "cereal/cereal.hpp"
+#include "desevi/graph/NodeBase.h"
 
 #include <cereal/types/polymorphic.hpp>
 
@@ -22,7 +21,7 @@ public:
 
   static TypeKind inferKindFromExtension(const QString &filename);
 
-private:
+protected:
   QString filename;
 };
 
@@ -30,6 +29,8 @@ class SourceFileNode : public FileNode {
 public:
   SourceFileNode(const QString &filename, QGraphicsItem *parent = nullptr);
   QString description() const override;
+  ProcessResult process(ProcessInput input) override;
+  bool isSource() override { return true; }
 
 private:
   std::shared_ptr<NodeSocket> outputSocket;

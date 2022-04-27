@@ -5,13 +5,17 @@
 #include "desevi/graph/MLIRModuleLoader.h"
 
 #include "circt/Conversion/Passes.h"
+#include "circt/InitAllDialects.h"
 #include "mlir/Conversion/Passes.h"
+#include "mlir/Dialect/ControlFlow/IR/ControlFlow.h"
+#include "mlir/Dialect/Func/IR/FuncOps.h"
+#include "mlir/Dialect/LLVMIR/LLVMDialect.h"
 #include "mlir/Pass/PassManager.h"
+#include "llvm/Support/InitLLVM.h"
 
 /// TODO: This could probably be done more elegantly by a modified TableGen
 /// executable.
 void initTransforms(TransformsRegistry &registry) {
-  /*
   registry.registerTransformation<MLIRModuleLoader>();
   registry.registerTransformation(
       "Passthrough", NodeType(TypeKind::AnyMLIR), NodeType(TypeKind::AnyMLIR),
@@ -35,15 +39,28 @@ void initTransforms(TransformsRegistry &registry) {
       NodeType(TypeKind::FIRRTL), [](mlir::OpPassManager &pm) {
         pm.addPass(circt::createHandshakeToFIRRTLPass());
       });
-*/
 }
 
 int main(int argc, char *argv[]) {
+  llvm::InitLLVM y(argc, argv);
   QApplication a(argc, argv);
 
+  mlir::DialectRegistry dialectRegistry;
+  dialectRegistry.insert<mlir::AffineDialect>();
+  dialectRegistry.insert<mlir::LLVM::LLVMDialect>();
+  dialectRegistry.insert<mlir::memref::MemRefDialect>();
+  dialectRegistry.insert<mlir::func::FuncDialect>();
+  dialectRegistry.insert<mlir::arith::ArithmeticDialect>();
+  dialectRegistry.insert<mlir::cf::ControlFlowDialect>();
+  dialectRegistry.insert<mlir::scf::SCFDialect>();
+  circt::registerAllDialects(dialectRegistry);
+
+  mlir::MLIRContext context(dialectRegistry);
+  context.allowUnregisteredDialects();
+
   TransformsRegistry registry;
-  // initTransforms(registry);
-  MainWindow w(registry);
+  initTransforms(registry);
+  MainWindow w(context, registry);
   w.showMaximized();
   return a.exec();
 }

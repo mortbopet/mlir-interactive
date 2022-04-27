@@ -4,6 +4,13 @@
 #include <QPlainTextEdit>
 #include <QTextStream>
 
+#include "mlir/Support/FileUtilities.h"
+#include "mlir/Support/LogicalResult.h"
+#include "llvm/ADT/StringRef.h"
+
+using namespace llvm;
+using namespace mlir;
+
 void FileNode::setFilename(const QString &filename) {
   this->filename = filename;
 
@@ -44,3 +51,14 @@ SourceFileNode::SourceFileNode(const QString &filename, QGraphicsItem *parent)
 }
 
 QString SourceFileNode::description() const { return "Loads a file."; }
+
+ProcessResult SourceFileNode::process(ProcessInput processInput) {
+  assert(processInput.input == nullptr && "Input to a source node?");
+  std::string errorMessage;
+  auto input = mlir::openInputFile(filename.toStdString(), &errorMessage);
+  if (!input) {
+    return processFailure() << errorMessage << "\n";
+  }
+  return ResultMapping{
+      {getOutput(0), std::make_shared<InflightSource>(std::move(input))}};
+}

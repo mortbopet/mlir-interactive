@@ -1,4 +1,5 @@
 #include "desevi/graph/NodeSocket.h"
+#include "desevi/IRState.h"
 #include "desevi/graph/Edge.h"
 
 #include <QBrush>
@@ -10,11 +11,13 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPen>
+#include <QPlainTextEdit>
 #include <QTimeLine>
 
-NodeSocket::NodeSocket(const QString &name, NodeType type,
+NodeSocket::NodeSocket(const QString &name, NodeType type, NodeBase *node,
                        QGraphicsItem *parent)
-    : BaseGraphicsItem<QGraphicsEllipseItem>(name, parent), type(type) {
+    : BaseGraphicsItem<QGraphicsEllipseItem>(name, parent), type(type),
+      node(node) {
   setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
   setFlag(QGraphicsItem::ItemIsMovable, false);
   setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -50,8 +53,9 @@ NodeSocket::NodeSocket(const QString &name, NodeType type,
 
 NodeSocket::~NodeSocket() {
   // Clear the edge before destroying this socket.
-  if (edge)
+  if (edge) {
     edge->erase();
+  }
 }
 
 void NodeSocket::enableDropHighlight(bool enabled) {
@@ -63,8 +67,8 @@ void NodeSocket::enableDropHighlight(bool enabled) {
 }
 
 NodeInputSocket::NodeInputSocket(const QString &name, NodeType type,
-                                 QGraphicsItem *parent)
-    : NodeSocket(name, type, parent) {
+                                 NodeBase *node, QGraphicsItem *parent)
+    : NodeSocket(name, type, node, parent) {
   setBrush(Qt::red);
 }
 
@@ -110,8 +114,10 @@ void NodeSocket::setType(NodeType type) {
             ? static_cast<NodeSocket *>(edge->getStartSocket())
             : edge->getEndSocket();
 
-    if (!otherSocket->getType().isCompatible(type))
+    if (!otherSocket->getType().isCompatible(type)) {
       edge->erase();
+      nodeChanged();
+    }
   }
 
   this->type = type;
@@ -135,6 +141,13 @@ void NodeSocket::createUI(QVBoxLayout *layout) {
   hlayout->addWidget(new QLabel("Type:"));
   hlayout->addWidget(typeLabel);
   layout->addLayout(hlayout);
+
+  auto IRState = static_cast<Scene *>(scene())->getIRStateForItem(this);
+  if (IRState.has_value()) {
+    auto IRTextEdit = new QPlainTextEdit();
+    IRTextEdit->setPlainText(IRState.value().getIR());
+    layout->addWidget(IRTextEdit);
+  }
 }
 
 void NodeInputSocket::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -150,8 +163,8 @@ void NodeInputSocket::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 NodeOutputSocket::NodeOutputSocket(const QString &name, NodeType type,
-                                   QGraphicsItem *parent)
-    : NodeSocket(name, type, parent) {
+                                   NodeBase *node, QGraphicsItem *parent)
+    : NodeSocket(name, type, node, parent) {
   setBrush(Qt::green);
 }
 

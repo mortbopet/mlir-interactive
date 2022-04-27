@@ -1,5 +1,7 @@
 #pragma once
 
+#include "desevi/FailureOr.h"
+#include "desevi/InflightResult.h"
 #include "desevi/graph/BaseItem.h"
 #include "desevi/graph/NodeSocket.h"
 
@@ -11,6 +13,11 @@
 #include <memory>
 #include <string>
 #include <vector>
+
+struct ProcessInput {
+  mlir::MLIRContext &context;
+  InflightResultBase *input;
+};
 
 class NodeBase : public BaseGraphicsItem<QGraphicsRectItem> {
   Q_OBJECT
@@ -28,12 +35,24 @@ public:
     return outputs;
   }
 
+  template <typename SocketType = NodeOutputSocket>
+  SocketType *getOutput(int index) {
+    assert(outputs.size() > index);
+    return static_cast<SocketType *>(outputs.at(index).get());
+  }
+
+  template <typename SocketType = NodeInputSocket>
+  SocketType *getInput(int index) {
+    assert(inputs.size() > index);
+    return static_cast<SocketType *>(outputs.at(index).get());
+  }
+
   /// Add an input socket.
   template <typename... Args>
   std::shared_ptr<NodeSocket> addInput(const QString &name, NodeType type,
                                        Args &&...args) {
     auto socket = std::make_shared<NodeInputSocket>(
-        name, type, this, std::forward<Args>(args)...);
+        name, type, this, this, std::forward<Args>(args)...);
     inputs.push_back(socket);
     updateSockets();
     return socket;
@@ -44,7 +63,7 @@ public:
   std::shared_ptr<NodeSocket> addOutput(const QString &name, NodeType type,
                                         Args &&...args) {
     auto socket = std::make_shared<NodeOutputSocket>(
-        name, type, this, std::forward<Args>(args)...);
+        name, type, this, this, std::forward<Args>(args)...);
     outputs.push_back(socket);
     updateSockets();
     return socket;
@@ -58,6 +77,15 @@ public:
   }
 
   void setName(const QString &name) override;
+
+  /// Returns true if this is a source node. Source nodes define starting points
+  /// in the compilation graph..
+  virtual bool isSource() { return false; }
+
+  /// Process an inflight result through this node.
+  virtual ProcessResult process(ProcessInput input) = 0;
+
+  void createUI(QVBoxLayout *layout) override;
 
 protected:
   /// Adjusts the position of input- and output sockets.

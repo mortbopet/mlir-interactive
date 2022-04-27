@@ -36,6 +36,7 @@ public:
   }
 
   void addToPipeline(mlir::OpPassManager &pm);
+  ProcessResult process(ProcessInput processInput) override;
 
 private:
   NodeType inputType = NodeType(TypeKind::None);

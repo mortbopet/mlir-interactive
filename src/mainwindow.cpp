@@ -12,6 +12,7 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 
+#include "desevi/PassExecuter.h"
 #include "desevi/Scene.h"
 #include "desevi/graph/MLIRModuleLoader.h"
 #include "desevi/graph/TransformNode.h"
@@ -27,11 +28,13 @@ void clearLayout(QLayout *layout) {
   }
 }
 
-MainWindow::MainWindow(TransformsRegistry &registry, QWidget *parent)
+MainWindow::MainWindow(mlir::MLIRContext &context, TransformsRegistry &registry,
+                       QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), registry(registry) {
   ui->setupUi(this);
 
-  scene = new Scene(this);
+  executer = std::make_unique<PassExecuter>(context);
+  scene = new Scene(*executer, this);
   scene->setItemIndexMethod(QGraphicsScene::NoIndex);
   ui->graphicsView->setScene(scene);
   scene->setBackgroundBrush(QColor(Qt::gray));
@@ -67,6 +70,8 @@ MainWindow::MainWindow(TransformsRegistry &registry, QWidget *parent)
     ui->focusLayout->addSpacerItem(new QSpacerItem(
         1, 1, QSizePolicy::Minimum, QSizePolicy::MinimumExpanding));
   });
+
+  loadDirectory(QDir::currentPath());
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -117,14 +122,10 @@ void MainWindow::transformsDoubleClicked(const QModelIndex &index) {
   scene->addItem(node);
 }
 
-void MainWindow::openFolderClicked() {
-  QString folder = QFileDialog::getExistingDirectory(this, "Open Folder");
-  if (folder.isEmpty())
-    return;
-
+void MainWindow::loadDirectory(const QString &path) {
   // Create entries for the files in the directory in the file explorer.
   fileModel->clear();
-  QDirIterator it(folder, QDirIterator::Subdirectories);
+  QDirIterator it(path, QDirIterator::Subdirectories);
   while (it.hasNext()) {
     it.next();
     if (it.fileInfo().isFile()) {
@@ -133,4 +134,12 @@ void MainWindow::openFolderClicked() {
       fileModel->appendRow(item);
     }
   }
+}
+
+void MainWindow::openFolderClicked() {
+  QString folder = QFileDialog::getExistingDirectory(this, "Open Folder");
+  if (folder.isEmpty())
+    return;
+
+  loadDirectory(folder);
 }

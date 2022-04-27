@@ -1,12 +1,14 @@
 #include "desevi/graph/MLIRModuleLoader.h"
 #include "desevi/NodeTypes.h"
 
+#include "mlir/Parser/Parser.h"
+
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QLabel>
 
 MLIRModuleLoader::MLIRModuleLoader(QGraphicsItem *parent)
-    : NodeBase("MLIR Module", parent) {
+    : NodeBase("MLIR module loader", parent) {
 
   addInput("input file", NodeType(TypeKind::AnyFile));
   addOutput("MLIR module", NodeType(TypeKind::AnyMLIR));
@@ -35,6 +37,8 @@ void MLIRModuleLoader::createUI(QVBoxLayout *layout) {
   hlayout->addWidget(new QLabel("MLIR type:"));
   hlayout->addWidget(mlirTypeComboBox);
   layout->addLayout(hlayout);
+
+  NodeBase::createUI(layout);
 }
 
 void MLIRModuleLoader::setOutputType(const TypeKind &kind) {
@@ -43,4 +47,21 @@ void MLIRModuleLoader::setOutputType(const TypeKind &kind) {
 
 QString MLIRModuleLoader::description() const {
   return "Loads an MLIR module from a file.";
+}
+
+ProcessResult MLIRModuleLoader::process(ProcessInput processInput) {
+  auto memBfr = dynamic_cast<InflightSource *>(processInput.input);
+  assert(memBfr && "Expected memory buffer as input!");
+  llvm::SourceMgr sourceMgr;
+  sourceMgr.AddNewSourceBuffer(std::move(memBfr->getValue()), llvm::SMLoc());
+
+  auto module = std::make_unique<mlir::OwningOpRef<mlir::ModuleOp>>();
+  *module =
+      mlir::parseSourceFile<mlir::ModuleOp>(sourceMgr, &processInput.context);
+
+  if (!module.get()->get())
+    return processFailure() << "Failure during MLIR module loading!";
+
+  return ResultMapping{
+      {getOutput(0), std::make_shared<InflightModule>(std::move(module))}};
 }

@@ -7,16 +7,26 @@
 
 class BaseItem;
 class NodeSocket;
+class PassExecuter;
+class IRState;
 
 class Scene : public QGraphicsScene {
   Q_OBJECT
 public:
-  Scene(QObject *parent = nullptr);
+  Scene(PassExecuter &executer, QObject *parent = nullptr);
 
   void requestFocus(BaseItem *item);
 
   void highlightCompatibleSockets(NodeSocket *source, NodeType sourceType);
   void clearSocketHighlight();
+
+  /// Returns any registered in-flight information for the selected pipeline
+  /// item.
+  std::optional<IRState> getIRStateForItem(BaseItem *item);
+
+  /// Called by items in the scene whenever a change to compilation graph
+  /// occurs.
+  void graphChanged();
 
 signals:
   void focusItem(BaseItem *);
@@ -56,4 +66,5 @@ signals:
 
 private:
   std::vector<NodeSocket *> highlightedSockets;
+  PassExecuter &executer;
 };

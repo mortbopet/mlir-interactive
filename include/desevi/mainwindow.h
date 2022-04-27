@@ -13,12 +13,18 @@ class QStandardItemModel;
 QT_END_NAMESPACE
 
 class Scene;
+class PassExecuter;
+
+namespace mlir {
+class MLIRContext;
+}
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  MainWindow(TransformsRegistry &registry, QWidget *parent = nullptr);
+  MainWindow(mlir::MLIRContext &context, TransformsRegistry &registry,
+             QWidget *parent = nullptr);
   ~MainWindow();
 
 private:
@@ -27,6 +33,7 @@ private:
   void setupTransforms();
   void setupActions();
   void openFolderClicked();
+  void loadDirectory(const QString &path);
 
   /// When enabled, the pipeline will be execute on every change.
   QAction *interactiveAction = nullptr;
@@ -38,5 +45,6 @@ private:
   Scene *scene;
   QStandardItemModel *fileModel;
   TransformsRegistry &registry;
+  std::unique_ptr<PassExecuter> executer;
 };
 #endif // MAINWINDOW_H

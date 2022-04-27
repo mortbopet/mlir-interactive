@@ -12,4 +12,6 @@ public:
   void setOutputType(const TypeKind &type);
   void createUI(QVBoxLayout *layout) override;
   QString description() const override;
+
+  ProcessResult process(ProcessInput processInput) override;
 };

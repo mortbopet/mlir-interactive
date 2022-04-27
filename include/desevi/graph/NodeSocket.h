@@ -7,22 +7,27 @@
 #include "desevi/NodeTypes.h"
 #include "desevi/graph/BaseItem.h"
 
-class Edge;
+QT_BEGIN_NAMESPACE
 class QTimeLine;
 class QGraphicsItemAnimation;
+QT_END_NAMESPACE
+
+class Edge;
+class NodeBase;
 
 class NodeSocket : public BaseGraphicsItem<QGraphicsEllipseItem> {
   Q_OBJECT
   constexpr static double size = 15.0;
 
 public:
-  NodeSocket(const QString &name, NodeType type,
-             QGraphicsItem *parent = nullptr);
+  NodeSocket(const QString &name, NodeType type, NodeBase *node,
+             QGraphicsItem *parent);
   ~NodeSocket() override;
 
   QVariant itemChange(QGraphicsItem::GraphicsItemChange change,
                       const QVariant &value) override;
 
+  bool hasEdge() { return static_cast<bool>(edge); }
   const std::shared_ptr<Edge> &getEdge() { return edge; }
   void setEdge(std::shared_ptr<Edge> edge);
   void clearEdge();
@@ -33,6 +38,7 @@ public:
   bool isCompatible(NodeSocket *socket);
   NodeType getType() const { return type; }
   void setType(NodeType type);
+  NodeBase *getNode() { return node; }
 
   template <class Archive>
   void serialize(Archive &ar) {
@@ -56,13 +62,14 @@ private:
   QGraphicsEllipseItem *dropHighlight = nullptr;
   QGraphicsItemAnimation *dropHighlightAnimation = nullptr;
   QTimeLine *dropHighlightTimer = nullptr;
+  NodeBase *node = nullptr;
 };
 
 class NodeInputSocket : public NodeSocket {
 
 public:
-  NodeInputSocket(const QString &name, NodeType type,
-                  QGraphicsItem *parent = nullptr);
+  NodeInputSocket(const QString &name, NodeType type, NodeBase *node,
+                  QGraphicsItem *parent);
   void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 };
 
@@ -70,8 +77,8 @@ class NodeOutputSocket : public NodeSocket {
   friend class NodeInputSocket;
 
 public:
-  NodeOutputSocket(const QString &name, NodeType type,
-                   QGraphicsItem *parent = nullptr);
+  NodeOutputSocket(const QString &name, NodeType type, NodeBase *node,
+                   QGraphicsItem *parent);
 
 protected:
   void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

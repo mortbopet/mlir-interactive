@@ -11,6 +11,7 @@ Edge::Edge(NodeOutputSocket *startSocket)
 void Edge::setEndSocket(NodeInputSocket *endSocket) {
   this->endSocket = endSocket;
   drawLineBetweenSockets();
+  edgeChanged();
 }
 
 void Edge::drawLineBetweenSockets() {
@@ -31,3 +32,5 @@ void Edge::erase() {
   startSocket = nullptr;
   endSocket = nullptr;
 }
+
+void Edge::edgeChanged() { static_cast<Scene *>(scene())->graphChanged(); }

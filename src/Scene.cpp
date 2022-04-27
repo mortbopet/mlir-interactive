@@ -1,9 +1,11 @@
 #include "desevi/Scene.h"
 
+#include "desevi/PassExecuter.h"
 #include "desevi/graph/NodeBase.h"
 #include "desevi/graph/NodeSocket.h"
 
-Scene::Scene(QObject *parent) : QGraphicsScene(parent) {}
+Scene::Scene(PassExecuter &executer, QObject *parent)
+    : QGraphicsScene(parent), executer(executer) {}
 
 void Scene::requestFocus(BaseItem *node) { focusItem(node); }
 
@@ -25,3 +27,9 @@ void Scene::clearSocketHighlight() {
   }
   highlightedSockets.clear();
 }
+
+std::optional<IRState> Scene::getIRStateForItem(BaseItem *item) {
+  return executer.getState(item);
+}
+
+void Scene::graphChanged() { executer.execute(*this); }

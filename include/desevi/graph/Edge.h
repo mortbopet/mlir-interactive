@@ -17,6 +17,10 @@ public:
   void drawLineTo(QPointF pos);
 
 private:
+  /// Called by this object on construction, destruction and end socket change
+  /// to notify the scene that graph connectivity was modified.
+  void edgeChanged();
+
   NodeOutputSocket *startSocket;
   NodeInputSocket *endSocket;
 };

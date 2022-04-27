@@ -11,6 +11,11 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# If on linux and using clang, force lld.
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(CMAKE_CXX_LINK_FLAGS "-fuse-ld=lld")
+endif()
+
 #-------------------------------------------------------------------------------
 # MLIR/LLVM Configuration
 #-------------------------------------------------------------------------------
@@ -65,23 +70,55 @@ set(PROJECT_SOURCES
 # set QT_NO_EMIT to avoid colliding names in MLIR
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_NO_EMIT")
 
-
 add_executable(Desevi ${PROJECT_SOURCES})
 target_include_directories(Desevi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(Desevi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external)
+set(LLVM_REQUIRES_EH ON)
+set(LLVM_REQUIRES_RTTI ON)
+llvm_update_compile_flags(Desevi)
 
 # Qt links
 target_link_libraries(Desevi PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 # LLVM/MLIR/CIRCT links
-
 target_link_libraries(Desevi
-       PUBLIC
+       PRIVATE
+       LLVMSupport
+       MLIRParser
+       MLIRSideEffectInterfaces
+       MLIRSupport
+       MLIRTransforms
+
+       # MLIR dialects
+       MLIRIR
+       MLIRLLVMIR
+       MLIRMemRef
+       MLIROptLib
+       MLIRParser
+       MLIRFunc
+       MLIRSCF
+
+       # MLIR conversions
        MLIRSCFToControlFlow
+
+       # CIRCT dialects
+       CIRCTCalyx
+       CIRCTHandshake
+       CIRCTFIRRTL
+       CIRCTComb
+       CIRCTHW
+       CIRCTSeq
+       CIRCTESI
+       CIRCTFSM
+       CIRCTLLHD
+       CIRCTMSFT
+       CIRCTMoore
+       CIRCTStaticLogicOps
+
+       # CIRCT conversions
        CIRCTStandardToHandshake
        CIRCTHandshakeToFIRRTL
 )
-
 
 #-------------------------------------------------------------------------------
 # External setup

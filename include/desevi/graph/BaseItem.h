@@ -41,4 +41,6 @@ public:
 
     return T::itemChange(change, value);
   }
+
+  void nodeChanged() { static_cast<Scene *>(T::scene())->graphChanged(); }
 };

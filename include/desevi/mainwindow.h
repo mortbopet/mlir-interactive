@@ -9,7 +9,7 @@
 QT_BEGIN_NAMESPACE namespace Ui { class MainWindow; }
 class QGraphicsScene;
 class QAction;
-class QStandardItemModel;
+class QFileSystemModel;
 QT_END_NAMESPACE
 
 class Scene;
@@ -33,7 +33,6 @@ private:
   void setupTransforms();
   void setupActions();
   void openFolderClicked();
-  void loadDirectory(const QString &path);
 
   /// When enabled, the pipeline will be execute on every change.
   QAction *interactiveAction = nullptr;
@@ -43,7 +42,7 @@ private:
 
   Ui::MainWindow *ui;
   Scene *scene;
-  QStandardItemModel *fileModel;
+  QFileSystemModel *fileModel;
   TransformsRegistry &registry;
   std::unique_ptr<PassExecuter> executer;
 };

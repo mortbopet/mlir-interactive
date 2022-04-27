@@ -4,6 +4,7 @@
 #include <QAction>
 #include <QDirIterator>
 #include <QFileDialog>
+#include <QFileSystemModel>
 #include <QGraphicsView>
 #include <QLabel>
 #include <QListView>
@@ -40,8 +41,10 @@ MainWindow::MainWindow(mlir::MLIRContext &context, TransformsRegistry &registry,
   scene->setBackgroundBrush(QColor(Qt::gray));
 
   // Mock file explorer
-  fileModel = new QStandardItemModel(this);
+  fileModel = new QFileSystemModel(this);
   ui->explorer->setModel(fileModel);
+  fileModel->setRootPath(QDir::currentPath());
+  ui->explorer->setRootIndex(fileModel->index(QDir::currentPath()));
 
   connect(ui->explorer, &QTreeView::doubleClicked, this,
           &MainWindow::explorerDoubleClicked);
@@ -70,8 +73,6 @@ MainWindow::MainWindow(mlir::MLIRContext &context, TransformsRegistry &registry,
     ui->focusLayout->addSpacerItem(new QSpacerItem(
         1, 1, QSizePolicy::Minimum, QSizePolicy::MinimumExpanding));
   });
-
-  loadDirectory(QDir::currentPath());
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -79,7 +80,11 @@ MainWindow::~MainWindow() { delete ui; }
 void MainWindow::explorerDoubleClicked(const QModelIndex &index) {
   QString filename = index.data(Qt::UserRole).toString();
   // Create a new source file node.
-  auto *node = new SourceFileNode(filename, nullptr);
+  QString path = fileModel->filePath(index);
+  if (!QFileInfo(path).isFile())
+    return;
+
+  auto *node = new SourceFileNode(path, nullptr);
   scene->addItem(node);
 }
 
@@ -122,25 +127,10 @@ void MainWindow::transformsDoubleClicked(const QModelIndex &index) {
   scene->addItem(node);
 }
 
-void MainWindow::loadDirectory(const QString &path) {
-  // Create entries for the files in the directory in the file explorer.
-  fileModel->clear();
-  QDirIterator it(path, QDirIterator::Subdirectories);
-  while (it.hasNext()) {
-    it.next();
-    if (it.fileInfo().isFile()) {
-      auto *item = new QStandardItem(it.fileInfo().fileName());
-      item->setData(it.fileInfo().absoluteFilePath(), Qt::UserRole);
-      item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-      fileModel->appendRow(item);
-    }
-  }
-}
-
 void MainWindow::openFolderClicked() {
   QString folder = QFileDialog::getExistingDirectory(this, "Open Folder");
   if (folder.isEmpty())
     return;
 
-  loadDirectory(folder);
+  ui->explorer->setRootIndex(fileModel->index(folder));
 }

@@ -77,7 +77,7 @@ MainWindow::MainWindow(mlir::MLIRContext &context, TransformsRegistry &registry,
 MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::explorerDoubleClicked(const QModelIndex &index) {
-  QString filename = index.data().toString();
+  QString filename = index.data(Qt::UserRole).toString();
   // Create a new source file node.
   auto *node = new SourceFileNode(filename, nullptr);
   scene->addItem(node);
@@ -129,7 +129,8 @@ void MainWindow::loadDirectory(const QString &path) {
   while (it.hasNext()) {
     it.next();
     if (it.fileInfo().isFile()) {
-      auto *item = new QStandardItem(it.fileInfo().absoluteFilePath());
+      auto *item = new QStandardItem(it.fileInfo().fileName());
+      item->setData(it.fileInfo().absoluteFilePath(), Qt::UserRole);
       item->setFlags(item->flags() & ~Qt::ItemIsEditable);
       fileModel->appendRow(item);
     }

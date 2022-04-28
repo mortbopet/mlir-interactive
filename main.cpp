@@ -1,8 +1,8 @@
-#include "desevi/mainwindow.h"
+#include "mlir-viewer/mainwindow.h"
 
 #include <QApplication>
 
-#include "desevi/graph/MLIRModuleLoader.h"
+#include "mlir-viewer/graph/MLIRModuleLoader.h"
 
 #include "circt/Conversion/Passes.h"
 #include "circt/InitAllDialects.h"

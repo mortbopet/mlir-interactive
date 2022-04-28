@@ -1,9 +1,9 @@
 #pragma once
 
-#include "desevi/Support/FailureOr.h"
-#include "desevi/Support/InflightResult.h"
-#include "desevi/graph/BaseItem.h"
-#include "desevi/graph/NodeSocket.h"
+#include "mlir-viewer/Support/FailureOr.h"
+#include "mlir-viewer/Support/InflightResult.h"
+#include "mlir-viewer/graph/BaseItem.h"
+#include "mlir-viewer/graph/NodeSocket.h"
 
 #include <QGraphicsRectItem>
 #include <QGraphicsSimpleTextItem>

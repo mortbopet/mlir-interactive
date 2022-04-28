@@ -1,9 +1,9 @@
-#include "desevi/Scene.h"
+#include "mlir-viewer/Scene.h"
 
-#include "desevi/PassExecuter.h"
-#include "desevi/graph/Edge.h"
-#include "desevi/graph/NodeBase.h"
-#include "desevi/graph/NodeSocket.h"
+#include "mlir-viewer/PassExecuter.h"
+#include "mlir-viewer/graph/Edge.h"
+#include "mlir-viewer/graph/NodeBase.h"
+#include "mlir-viewer/graph/NodeSocket.h"
 
 Scene::Scene(PassExecuter &executer, QObject *parent)
     : QGraphicsScene(parent), executer(executer) {}

@@ -6,7 +6,7 @@
 
 #include <llvm/ADT/Any.h>
 
-#include "desevi/IRState.h"
+#include "mlir-viewer/IRState.h"
 
 class Scene;
 class NodeBase;
@@ -20,7 +20,7 @@ class PassExecuter {
 public:
   PassExecuter(mlir::MLIRContext &context);
 
-  /// Runs the pass executer on the nodes of the Desevi scene.
+  /// Runs the pass executer on the nodes of the mlir-viewer scene.
   void execute(Scene &scene);
   std::optional<IRState> getState(void *item);
 

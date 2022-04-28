@@ -1,4 +1,4 @@
-#include "desevi/mainwindow.h"
+#include "mlir-viewer/mainwindow.h"
 #include "ui_mainwindow.h"
 
 #include <QAction>
@@ -18,10 +18,10 @@
 #include <cereal/archives/json.hpp>
 #include <cereal/types/vector.hpp>
 
-#include "desevi/PassExecuter.h"
-#include "desevi/Scene.h"
-#include "desevi/graph/MLIRModuleLoader.h"
-#include "desevi/graph/TransformNode.h"
+#include "mlir-viewer/PassExecuter.h"
+#include "mlir-viewer/Scene.h"
+#include "mlir-viewer/graph/MLIRModuleLoader.h"
+#include "mlir-viewer/graph/TransformNode.h"
 
 void clearLayout(QLayout *layout) {
   // Clear focuslayout

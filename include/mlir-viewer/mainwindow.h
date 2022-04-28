@@ -3,8 +3,8 @@
 
 #include <QMainWindow>
 
-#include "desevi/TransformsRegistry.h"
-#include "desevi/graph/FileNode.h"
+#include "mlir-viewer/TransformsRegistry.h"
+#include "mlir-viewer/graph/FileNode.h"
 
 QT_BEGIN_NAMESPACE namespace Ui { class MainWindow; }
 class QGraphicsScene;

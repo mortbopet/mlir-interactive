@@ -1,6 +1,6 @@
-#include "desevi/graph/NodeBase.h"
-#include "desevi/IRState.h"
-#include "desevi/Scene.h"
+#include "mlir-viewer/graph/NodeBase.h"
+#include "mlir-viewer/IRState.h"
+#include "mlir-viewer/Scene.h"
 
 #include "cereal/cereal.hpp"
 

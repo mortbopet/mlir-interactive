@@ -1,6 +1,6 @@
 #pragma once
 
-#include "desevi/graph/NodeBase.h"
+#include "mlir-viewer/graph/NodeBase.h"
 
 #include <QString>
 

@@ -1,9 +1,8 @@
-
 #pragma once
 
 #include "mlir/Support/LogicalResult.h"
 
-namespace desevi {
+namespace mv {
 
 /// Like mlir::FailureOr but additionally carries an error message.
 template <typename T>
@@ -11,8 +10,10 @@ class FailureOr : public mlir::FailureOr<T> {
 public:
   using mlir::FailureOr<T>::FailureOr;
   const std::string &getError() const { return m_errorMessage; }
-  FailureOr<T> operator<<(const std::string &other) { m_errorMessage += other;
-    return *this;}
+  FailureOr<T> operator<<(const std::string &other) {
+    m_errorMessage += other;
+    return *this;
+  }
 
 private:
   std::string m_errorMessage;
@@ -30,4 +31,4 @@ inline FailureOr<T> failure(bool isFailure = true) {
   return FailureOr<T>(mlir::LogicalResult::failure(isFailure));
 }
 
-} // namespace desevi
+} // namespace mlirviewer

@@ -1,7 +1,7 @@
-#include "desevi/PassExecuter.h"
-#include "desevi/Scene.h"
-#include "desevi/graph/Edge.h"
-#include "desevi/graph/NodeBase.h"
+#include "mlir-viewer/PassExecuter.h"
+#include "mlir-viewer/Scene.h"
+#include "mlir-viewer/graph/Edge.h"
+#include "mlir-viewer/graph/NodeBase.h"
 
 #include "mlir/IR/MLIRContext.h"
 #include "llvm/ADT/STLExtras.h"

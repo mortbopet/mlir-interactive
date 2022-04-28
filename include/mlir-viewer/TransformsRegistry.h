@@ -4,8 +4,8 @@
 #include <functional>
 #include <map>
 
-#include "desevi/NodeTypes.h"
-#include "desevi/graph/TransformNode.h"
+#include "mlir-viewer/NodeTypes.h"
+#include "mlir-viewer/graph/TransformNode.h"
 
 class NodeBase;
 

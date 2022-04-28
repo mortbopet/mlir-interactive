@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(Desevi VERSION 0.1 LANGUAGES CXX C)
+project(mlir-viewer VERSION 0.1 LANGUAGES CXX C)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -46,7 +46,7 @@ include_directories(${MLIR_INCLUDE_DIRS})
 include_directories(${CIRCT_INCLUDE_DIRS})
 
 #-------------------------------------------------------------------------------
-# Desevi setup
+# mlir-viewer setup
 #-------------------------------------------------------------------------------
 
 find_package(QT NAMES Qt5 COMPONENTS Widgets REQUIRED)
@@ -72,18 +72,18 @@ set(PROJECT_SOURCES
 # set QT_NO_EMIT to avoid colliding names in MLIR
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_NO_EMIT")
 
-add_executable(Desevi ${PROJECT_SOURCES})
-target_include_directories(Desevi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(Desevi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external)
+add_executable(mlir-viewer ${PROJECT_SOURCES})
+target_include_directories(mlir-viewer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(mlir-viewer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external)
 set(LLVM_REQUIRES_EH ON)
 set(LLVM_REQUIRES_RTTI ON)
-llvm_update_compile_flags(Desevi)
+llvm_update_compile_flags(mlir-viewer)
 
 # Qt links
-target_link_libraries(Desevi PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(mlir-viewer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 # LLVM/MLIR/CIRCT links
-target_link_libraries(Desevi
+target_link_libraries(mlir-viewer
        PRIVATE
        LLVMSupport
        MLIRParser
@@ -127,4 +127,4 @@ target_link_libraries(Desevi
 #-------------------------------------------------------------------------------
 
 add_subdirectory(external)
-target_include_directories(Desevi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/cereal/include)
+target_include_directories(mlir-viewer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/cereal/include)

@@ -4,8 +4,8 @@
 
 #include <memory>
 
-#include "desevi/NodeTypes.h"
-#include "desevi/graph/BaseGraphicsItem.h"
+#include "mlir-viewer/NodeTypes.h"
+#include "mlir-viewer/graph/BaseGraphicsItem.h"
 
 QT_BEGIN_NAMESPACE
 class QTimeLine;

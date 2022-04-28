@@ -1,6 +1,6 @@
-#include "desevi/graph/NodeSocket.h"
-#include "desevi/IRState.h"
-#include "desevi/graph/Edge.h"
+#include "mlir-viewer/graph/NodeSocket.h"
+#include "mlir-viewer/IRState.h"
+#include "mlir-viewer/graph/Edge.h"
 
 #include <QBrush>
 #include <QColor>

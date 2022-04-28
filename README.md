@@ -1,4 +1,4 @@
-# Desevi
+# mlir-viewer
 
 **De**sign **s**pace **e**xploration **vi**ewer.
 

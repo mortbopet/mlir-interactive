@@ -10,7 +10,7 @@
 
 #include <variant>
 
-#include "desevi/Support/FailureOr.h"
+#include "mlir-viewer/Support/FailureOr.h"
 
 class NodeOutputSocket;
 
@@ -53,11 +53,11 @@ public:
 /// result.
 using ResultMapping =
     std::map<NodeOutputSocket *, std::shared_ptr<InflightResultBase>>;
-using ProcessResult = desevi::FailureOr<ResultMapping>;
+using ProcessResult = mv::FailureOr<ResultMapping>;
 
 /// Utility function to generate a LogicalResult. If isFailure is true a
 /// `failure` result is generated, otherwise a 'success' result is generated.
-inline desevi::FailureOr<ResultMapping> processFailure(bool isFailure = true) {
-  return desevi::FailureOr<ResultMapping>(
+inline mv::FailureOr<ResultMapping> processFailure(bool isFailure = true) {
+  return mv::FailureOr<ResultMapping>(
       mlir::LogicalResult::failure(isFailure));
 }

@@ -2,7 +2,7 @@
 
 #include <QGraphicsLineItem>
 
-#include "desevi/graph/NodeSocket.h"
+#include "mlir-viewer/graph/NodeSocket.h"
 
 class Edge : public QGraphicsLineItem {
 public:

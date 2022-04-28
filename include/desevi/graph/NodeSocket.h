@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "desevi/NodeTypes.h"
-#include "desevi/graph/BaseItem.h"
+#include "desevi/graph/BaseGraphicsItem.h"
 
 QT_BEGIN_NAMESPACE
 class QTimeLine;

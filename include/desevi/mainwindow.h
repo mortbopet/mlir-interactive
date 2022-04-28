@@ -33,17 +33,24 @@ private:
   void setupTransforms();
   void setupActions();
   void openFolderClicked();
+  void saveClicked(QString filename = QString());
+  void saveAsClicked();
 
   /// When enabled, the pipeline will be execute on every change.
   QAction *interactiveAction = nullptr;
   /// Executes the pipeline.
   QAction *runAction = nullptr;
   QAction *openFolderAction = nullptr;
+  QAction *saveAction = nullptr;
+  QAction *saveAsAction = nullptr;
 
   Ui::MainWindow *ui;
   Scene *scene;
   QFileSystemModel *fileModel;
   TransformsRegistry &registry;
   std::unique_ptr<PassExecuter> executer;
+
+  /// Handle to the current saved project file
+  QString saveFile;
 };
 #endif // MAINWINDOW_H

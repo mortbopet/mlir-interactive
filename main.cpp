@@ -16,7 +16,10 @@
 #include "llvm/Support/InitLLVM.h"
 
 /// TODO: This could probably be done more elegantly by a modified TableGen
-/// executable.
+/// executable. That TableGen executable should also add additional reflection
+/// about the options of passes. Currently, this is nested deeply within type
+/// erased, private, and .cpp containing logic, which is impossible to even hack
+/// our way through to inspect.
 void initTransforms(TransformsRegistry &registry) {
   registry.registerTransformation<MLIRModuleLoader>();
   registry.registerTransformation(

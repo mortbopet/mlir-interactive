@@ -1,4 +1,4 @@
-#include "desevi/InflightResult.h"
+#include "desevi/Support/InflightResult.h"
 
 QString InflightSource::toString() {
   return QString::fromStdString(getValue().get()->getBuffer().str());

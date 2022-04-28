@@ -1,7 +1,7 @@
 #pragma once
 
-#include "desevi/FailureOr.h"
-#include "desevi/InflightResult.h"
+#include "desevi/Support/FailureOr.h"
+#include "desevi/Support/InflightResult.h"
 #include "desevi/graph/BaseItem.h"
 #include "desevi/graph/NodeSocket.h"
 
@@ -19,8 +19,18 @@ struct ProcessInput {
   InflightResultBase *input;
 };
 
+template <typename TInner>
+int indexOf(const std::vector<std::shared_ptr<TInner>> &container, TInner *v) {
+  auto it =
+      llvm::find_if(container, [&](const auto &it) { return it.get() == v; });
+  if (it == container.end())
+    return -1;
+  return std::distance(container.begin(), it);
+}
+
 class NodeBase : public BaseGraphicsItem<QGraphicsRectItem> {
   Q_OBJECT
+
 public:
   NodeBase(const QString &name = "", QGraphicsItem *parent = nullptr);
 
@@ -33,6 +43,11 @@ public:
   /// Returns the output sockets of the node.
   const std::vector<std::shared_ptr<NodeSocket>> &getOutputs() const {
     return outputs;
+  }
+
+  int indexOfInput(NodeSocket *socket) const { return indexOf(inputs, socket); }
+  int indexOfOutput(NodeSocket *socket) const {
+    return indexOf(outputs, socket);
   }
 
   template <typename SocketType = NodeOutputSocket>
@@ -67,13 +82,6 @@ public:
     outputs.push_back(socket);
     updateSockets();
     return socket;
-  }
-
-  template <class Archive>
-  void serialize(Archive &ar) {
-    auto name = getName();
-    ar(name);
-    setName(name);
   }
 
   void setName(const QString &name) override;

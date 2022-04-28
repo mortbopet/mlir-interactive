@@ -13,6 +13,11 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 
+#include <fstream>
+
+#include <cereal/archives/json.hpp>
+#include <cereal/types/vector.hpp>
+
 #include "desevi/PassExecuter.h"
 #include "desevi/Scene.h"
 #include "desevi/graph/MLIRModuleLoader.h"
@@ -107,6 +112,17 @@ void MainWindow::setupActions() {
   ui->menuFile->addAction(openFolderAction);
   connect(openFolderAction, &QAction::triggered, this,
           &MainWindow::openFolderClicked);
+
+  saveAction = new QAction("Save", this);
+  ui->menuFile->addAction(saveAction);
+  connect(saveAction, &QAction::triggered, this,
+          [this]() { this->saveClicked(); });
+  saveAction->setShortcut(QKeySequence::Save);
+
+  saveAsAction = new QAction("Save As", this);
+  ui->menuFile->addAction(saveAsAction);
+  connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveAsClicked);
+  saveAsAction->setShortcut(QKeySequence::SaveAs);
 }
 
 void MainWindow::setupTransforms() {
@@ -135,4 +151,27 @@ void MainWindow::openFolderClicked() {
     return;
 
   ui->explorer->setRootIndex(fileModel->index(folder));
+}
+
+void MainWindow::saveClicked(QString filename) {
+  if (filename.isEmpty()) {
+    if (saveFile.isEmpty()) {
+      return saveAsClicked();
+    } else {
+      filename = saveFile;
+    }
+  }
+
+  std::ofstream os(filename.toStdString());
+  cereal::JSONOutputArchive archive(os);
+  archive(cereal::make_nvp("scene", *scene));
+  os.close();
+  saveFile = filename;
+}
+
+void MainWindow::saveAsClicked() {
+  QString filename = QFileDialog::getSaveFileName(this, "Save File");
+  if (filename.isEmpty())
+    return;
+  saveClicked(filename);
 }

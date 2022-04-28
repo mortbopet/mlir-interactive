@@ -1,6 +1,7 @@
 #include "desevi/Scene.h"
 
 #include "desevi/PassExecuter.h"
+#include "desevi/graph/Edge.h"
 #include "desevi/graph/NodeBase.h"
 #include "desevi/graph/NodeSocket.h"
 
@@ -41,4 +42,36 @@ void Scene::executionFinished() {
       continue;
     node->updateDrawState();
   }
+}
+
+Scene::Serialization Scene::getSerialization() const {
+  Serialization s;
+  std::map<NodeBase *, QString> nodeToID;
+  std::map<QString, int> uniquer;
+
+  // Create unique IDs for all nodes in the scene
+  for (auto *item : itemsOfType<NodeBase>()) {
+    nodeToID[item] =
+        item->getName() + "_" + QString::number(uniquer[item->getName()]++);
+  }
+
+  // Serialize textual versions of the passes
+  for (auto it : nodeToID)
+    s.passes.push_back({it.second, it.first->getName()});
+
+  // Create edge serializations from the NodeToID map.
+  for (auto *edge : itemsOfType<Edge>()) {
+    NodeBase *from = edge->getStartSocket()->getNode();
+    int fromIdx = from->indexOfOutput(edge->getStartSocket());
+    auto &fromID = nodeToID.at(from);
+
+    NodeBase *to = edge->getEndSocket()->getNode();
+    int toIdx = to->indexOfInput(edge->getEndSocket());
+    auto &toID = nodeToID.at(to);
+
+    assert(fromIdx >= 0 && toIdx >= 0);
+
+    s.edges.push_back(Serialization::Edge{fromID, toID, fromIdx, toIdx});
+  }
+  return s;
 }

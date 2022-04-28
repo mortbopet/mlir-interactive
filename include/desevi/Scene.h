@@ -2,6 +2,7 @@
 
 #include <QGraphicsScene>
 #include <cereal/archives/json.hpp>
+#include <cereal/types/vector.hpp>
 
 #include "desevi/NodeTypes.h"
 
@@ -32,43 +33,75 @@ public:
   /// updated to reflect the resulting state.
   void executionFinished();
 
+  struct Serialization {
+    struct Node {
+      QString passID;   // Unique ID of the instance
+      QString passName; // Name corresponding to a registered pass.
+
+      template <class Archive>
+      void serialize(Archive &ar) {
+        ar(CEREAL_NVP(passID));
+        ar(CEREAL_NVP(passName));
+      }
+    };
+
+    // A list of mappings of [passID : passName]
+    std::vector<Node> passes;
+
+    struct Edge {
+      QString fromPassID;
+      QString toPassID;
+      int fromPassOutput;
+      int toPassInput;
+      template <class Archive>
+      void serialize(Archive &ar) {
+        ar(CEREAL_NVP(fromPassID));
+        ar(CEREAL_NVP(toPassID));
+        ar(CEREAL_NVP(fromPassOutput));
+        ar(CEREAL_NVP(toPassInput));
+      }
+    };
+    std::vector<Edge> edges;
+
+    template <class Archive>
+    void serialize(Archive &ar) {
+      ar(passes, edges);
+    }
+  };
+
+  template <class Archive>
+  void save(Archive &ar) const {
+    ar(getSerialization());
+  }
+
+  template <class Archive>
+  void load(Archive &ar) {}
+
+  template <typename T>
+  std::vector<T *> itemsOfType() const {
+    std::vector<T *> vs;
+    for (auto *item : items()) {
+      auto *v = dynamic_cast<T *>(item);
+      if (!v)
+        continue;
+      vs.push_back(v);
+    }
+    return vs;
+  }
+
 signals:
   void focusItem(BaseItem *);
 
-  /*
-  template <class Archive>
-  void store(const QString &filepath) const {
-    // Open file for writing
-    std::ofstream os(filepath.toStdString());
-    Archive oarchive oa(os);
-
-    // Serealize the scene
-    oarchive(*this);
-  }
-
-  template <class Archive>
-  void load(const QString &filepath) {
-    archive(cereal::make_nvp("nodes", nodes));
-  }
-
-  template <class Archive>
-  void serialize(Archive &ar) {
-    // Serialize nodes, then edges
-    for (auto item : items()) {
-      if (auto node = dynamic_cast<NodeBase *>(item)) {
-        ar(cereal::make_nvp("node", *node));
-      }
-    }
-
-    for (auto item : items()) {
-      if (auto node = dynamic_cast<NodeBase *>(item)) {
-        ar(cereal::make_nvp("node", *node));
-      }
-    }
-  }
-*/
-
 private:
+  Serialization getSerialization() const;
+
   std::vector<NodeSocket *> highlightedSockets;
   PassExecuter &executer;
 };
+
+template <class Archive>
+void serialize(Archive &archive, QString &m) {
+  std::string s = m.toStdString();
+  archive(s);
+  m = QString::fromStdString(s);
+}

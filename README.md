@@ -1,5 +1,3 @@
 # mlir-viewer
 
-**De**sign **s**pace **e**xploration **vi**ewer.
-
-All your pipelines are belong to us.
+Qt5 based UI for visual and interactive composition and execution of MLIR compilation flows.

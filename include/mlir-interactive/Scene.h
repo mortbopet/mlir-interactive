@@ -4,7 +4,7 @@
 #include <cereal/archives/json.hpp>
 #include <cereal/types/vector.hpp>
 
-#include "mlir-viewer/NodeTypes.h"
+#include "mlir-interactive/NodeTypes.h"
 
 class BaseItem;
 class NodeSocket;

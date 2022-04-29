@@ -3,8 +3,8 @@
 
 #include <QMainWindow>
 
-#include "mlir-viewer/TransformsRegistry.h"
-#include "mlir-viewer/graph/FileNode.h"
+#include "mlir-interactive/TransformsRegistry.h"
+#include "mlir-interactive/graph/FileNode.h"
 
 QT_BEGIN_NAMESPACE namespace Ui { class MainWindow; }
 class QGraphicsScene;

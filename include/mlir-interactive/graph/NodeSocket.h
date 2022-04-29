@@ -4,8 +4,8 @@
 
 #include <memory>
 
-#include "mlir-viewer/NodeTypes.h"
-#include "mlir-viewer/graph/BaseGraphicsItem.h"
+#include "mlir-interactive/NodeTypes.h"
+#include "mlir-interactive/graph/BaseGraphicsItem.h"
 
 QT_BEGIN_NAMESPACE
 class QTimeLine;

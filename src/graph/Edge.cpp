@@ -1,4 +1,4 @@
-#include "mlir-viewer/graph/Edge.h"
+#include "mlir-interactive/graph/Edge.h"
 
 #include <QPen>
 

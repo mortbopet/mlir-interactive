@@ -1,7 +1,7 @@
 #pragma once
 
 #include "cereal/cereal.hpp"
-#include "mlir-viewer/graph/NodeBase.h"
+#include "mlir-interactive/graph/NodeBase.h"
 
 #include <cereal/types/polymorphic.hpp>
 

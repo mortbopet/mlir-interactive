@@ -1,7 +1,7 @@
 #pragma once
 
-#include "mlir-viewer/Scene.h"
-#include "mlir-viewer/graph/BaseItem.h"
+#include "mlir-interactive/Scene.h"
+#include "mlir-interactive/graph/BaseItem.h"
 
 template <typename T = QGraphicsItem>
 class BaseGraphicsItem : public BaseItem, public T {

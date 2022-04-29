@@ -1,4 +1,4 @@
-#include "mlir-viewer/graph/PassNode.h"
+#include "mlir-interactive/graph/PassNode.h"
 
 #include "mlir/Pass/PassManager.h"
 

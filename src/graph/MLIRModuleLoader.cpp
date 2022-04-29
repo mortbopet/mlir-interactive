@@ -1,5 +1,5 @@
-#include "mlir-viewer/graph/MLIRModuleLoader.h"
-#include "mlir-viewer/NodeTypes.h"
+#include "mlir-interactive/graph/MLIRModuleLoader.h"
+#include "mlir-interactive/NodeTypes.h"
 
 #include "mlir/Parser/Parser.h"
 

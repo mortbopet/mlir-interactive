@@ -1,4 +1,4 @@
-#include "mlir-viewer/graph/FileNode.h"
+#include "mlir-interactive/graph/FileNode.h"
 
 #include <QFileInfo>
 #include <QPlainTextEdit>

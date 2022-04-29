@@ -1,9 +1,9 @@
-#include "mlir-viewer/Scene.h"
+#include "mlir-interactive/Scene.h"
 
-#include "mlir-viewer/PassExecuter.h"
-#include "mlir-viewer/graph/Edge.h"
-#include "mlir-viewer/graph/NodeBase.h"
-#include "mlir-viewer/graph/NodeSocket.h"
+#include "mlir-interactive/PassExecuter.h"
+#include "mlir-interactive/graph/Edge.h"
+#include "mlir-interactive/graph/NodeBase.h"
+#include "mlir-interactive/graph/NodeSocket.h"
 
 Scene::Scene(PassExecuter &executer, QObject *parent)
     : QGraphicsScene(parent), executer(executer) {}

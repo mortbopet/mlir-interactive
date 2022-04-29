@@ -1,6 +1,6 @@
-#include "mlir-viewer/graph/NodeSocket.h"
-#include "mlir-viewer/IRState.h"
-#include "mlir-viewer/graph/Edge.h"
+#include "mlir-interactive/graph/NodeSocket.h"
+#include "mlir-interactive/IRState.h"
+#include "mlir-interactive/graph/Edge.h"
 
 #include <QBrush>
 #include <QColor>

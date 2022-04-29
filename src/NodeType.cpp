@@ -1,4 +1,4 @@
-#include "mlir-viewer/NodeTypes.h"
+#include "mlir-interactive/NodeTypes.h"
 
 #include <QStringList>
 

@@ -1,5 +1,5 @@
-#include "mlir-viewer/InitDefaultTransforms.h"
-#include "mlir-viewer/mainwindow.h"
+#include "mlir-interactive/InitDefaultTransforms.h"
+#include "mlir-interactive/mainwindow.h"
 
 #include <QApplication>
 

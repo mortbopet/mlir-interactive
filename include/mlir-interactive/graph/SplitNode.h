@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mlir-viewer/graph/NodeBase.h"
+#include "mlir-interactive/graph/NodeBase.h"
 
 /// A split pass takes a single MLIR module and emits N different outputs.
 

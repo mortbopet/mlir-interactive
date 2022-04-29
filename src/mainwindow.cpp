@@ -1,4 +1,4 @@
-#include "mlir-viewer/mainwindow.h"
+#include "mlir-interactive/mainwindow.h"
 #include "ui_mainwindow.h"
 
 #include <QAction>
@@ -18,10 +18,10 @@
 #include <cereal/archives/json.hpp>
 #include <cereal/types/vector.hpp>
 
-#include "mlir-viewer/PassExecuter.h"
-#include "mlir-viewer/Scene.h"
-#include "mlir-viewer/graph/MLIRModuleLoader.h"
-#include "mlir-viewer/graph/PassNode.h"
+#include "mlir-interactive/PassExecuter.h"
+#include "mlir-interactive/Scene.h"
+#include "mlir-interactive/graph/MLIRModuleLoader.h"
+#include "mlir-interactive/graph/PassNode.h"
 
 void clearLayout(QLayout *layout) {
   // Clear focuslayout

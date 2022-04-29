@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mlir-viewer/graph/NodeBase.h"
+#include "mlir-interactive/graph/NodeBase.h"
 
 /// A node which loads an input file into an MLIR module. The MLIR module will
 /// post-loading be represented as a typed IR node.

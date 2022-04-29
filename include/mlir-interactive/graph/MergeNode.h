@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mlir-viewer/graph/NodeBase.h"
+#include "mlir-interactive/graph/NodeBase.h"
 
 /// A merge pass takes N different inputs of AnyMLIR and emit a single
 /// MLIR module, where all modules have been merged into one.

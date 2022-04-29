@@ -10,7 +10,7 @@
 
 #include <variant>
 
-#include "mlir-viewer/Support/FailureOr.h"
+#include "mlir-interactive/Support/FailureOr.h"
 
 class NodeOutputSocket;
 
@@ -58,6 +58,5 @@ using ProcessResult = mv::FailureOr<ResultMapping>;
 /// Utility function to generate a LogicalResult. If isFailure is true a
 /// `failure` result is generated, otherwise a 'success' result is generated.
 inline mv::FailureOr<ResultMapping> processFailure(bool isFailure = true) {
-  return mv::FailureOr<ResultMapping>(
-      mlir::LogicalResult::failure(isFailure));
+  return mv::FailureOr<ResultMapping>(mlir::LogicalResult::failure(isFailure));
 }

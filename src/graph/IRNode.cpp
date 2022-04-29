@@ -1,5 +1,5 @@
 
-#include "mlir-viewer/graph/NodeBase.h"
+#include "mlir-interactive/graph/NodeBase.h"
 
 /// An IR node represents an in-memory IR representation of some MLIR module.
 /// The IR node is a typed representation of the MLIR module.

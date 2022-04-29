@@ -1,4 +1,4 @@
-#include "mlir-viewer/graph/MergeNode.h"
+#include "mlir-interactive/graph/MergeNode.h"
 
 #include <QHBoxLayout>
 #include <QLabel>

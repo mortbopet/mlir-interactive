@@ -1,9 +1,9 @@
 #pragma once
 
-#include "mlir-viewer/Support/FailureOr.h"
-#include "mlir-viewer/Support/InflightResult.h"
-#include "mlir-viewer/graph/BaseItem.h"
-#include "mlir-viewer/graph/NodeSocket.h"
+#include "mlir-interactive/Support/FailureOr.h"
+#include "mlir-interactive/Support/InflightResult.h"
+#include "mlir-interactive/graph/BaseItem.h"
+#include "mlir-interactive/graph/NodeSocket.h"
 
 #include <QGraphicsRectItem>
 #include <QGraphicsSimpleTextItem>

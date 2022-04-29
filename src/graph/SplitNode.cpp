@@ -1,4 +1,4 @@
-#include "mlir-viewer/graph/SplitNode.h"
+#include "mlir-interactive/graph/SplitNode.h"
 
 #include <QHBoxLayout>
 #include <QHeaderView>

@@ -1,6 +1,6 @@
-#include "mlir-viewer/graph/NodeBase.h"
-#include "mlir-viewer/IRState.h"
-#include "mlir-viewer/Scene.h"
+#include "mlir-interactive/graph/NodeBase.h"
+#include "mlir-interactive/IRState.h"
+#include "mlir-interactive/Scene.h"
 
 #include "cereal/cereal.hpp"
 

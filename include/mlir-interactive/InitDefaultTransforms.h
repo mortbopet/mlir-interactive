@@ -1,8 +1,8 @@
-#include "mlir-viewer/TransformsRegistry.h"
+#include "mlir-interactive/TransformsRegistry.h"
 
-#include "mlir-viewer/graph/MLIRModuleLoader.h"
-#include "mlir-viewer/graph/MergeNode.h"
-#include "mlir-viewer/graph/SplitNode.h"
+#include "mlir-interactive/graph/MLIRModuleLoader.h"
+#include "mlir-interactive/graph/MergeNode.h"
+#include "mlir-interactive/graph/SplitNode.h"
 
 static inline void initDefaultTransforms(TransformsRegistry &registry) {
   registry.registerTransformation<MLIRModuleLoader>();

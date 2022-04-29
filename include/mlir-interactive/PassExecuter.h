@@ -6,8 +6,8 @@
 
 #include <llvm/ADT/Any.h>
 
-#include "mlir-viewer/IRState.h"
-#include "mlir-viewer/graph/NodeBase.h"
+#include "mlir-interactive/IRState.h"
+#include "mlir-interactive/graph/NodeBase.h"
 
 class Scene;
 class InflightResultBase;
@@ -20,7 +20,7 @@ class PassExecuter {
 public:
   PassExecuter(mlir::MLIRContext &context);
 
-  /// Runs the pass executer on the nodes of the mlir-viewer scene.
+  /// Runs the pass executer on the nodes of the mlir-interactive scene.
   void execute(Scene &scene);
   std::optional<IRState> getState(void *item);
 

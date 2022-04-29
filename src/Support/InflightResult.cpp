@@ -1,4 +1,4 @@
-#include "mlir-viewer/Support/InflightResult.h"
+#include "mlir-interactive/Support/InflightResult.h"
 
 QString InflightSource::toString() {
   return QString::fromStdString(getValue().get()->getBuffer().str());

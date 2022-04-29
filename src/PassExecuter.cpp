@@ -1,7 +1,7 @@
-#include "mlir-viewer/PassExecuter.h"
-#include "mlir-viewer/Scene.h"
-#include "mlir-viewer/graph/Edge.h"
-#include "mlir-viewer/graph/NodeBase.h"
+#include "mlir-interactive/PassExecuter.h"
+#include "mlir-interactive/Scene.h"
+#include "mlir-interactive/graph/Edge.h"
+#include "mlir-interactive/graph/NodeBase.h"
 
 #include "mlir/IR/MLIRContext.h"
 #include "llvm/ADT/STLExtras.h"

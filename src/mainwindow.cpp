@@ -46,6 +46,7 @@ MainWindow::MainWindow(mlir::MLIRContext &context, TransformsRegistry &registry,
   scene->setItemIndexMethod(QGraphicsScene::NoIndex);
   ui->graphicsView->setScene(scene);
   scene->setBackgroundBrush(QColor(Qt::gray));
+  ui->graphicsView->setRenderHint(QPainter::Antialiasing);
 
   // Mock file explorer
   fileModel = new QFileSystemModel(this);

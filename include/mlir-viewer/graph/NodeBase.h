@@ -31,6 +31,26 @@ int indexOf(const std::vector<std::shared_ptr<TInner>> &container, TInner *v) {
 class NodeBase : public BaseGraphicsItem<QGraphicsRectItem> {
   Q_OBJECT
 
+  template <typename TSocket>
+  std::shared_ptr<NodeSocket>
+  addSocket(const QString &name,
+            std::vector<std::shared_ptr<NodeSocket>> &container,
+            NodeType type) {
+    auto socket = std::make_shared<TSocket>(name, type, this, this);
+    container.push_back(socket);
+    updateSockets();
+    return socket;
+  }
+
+  void removeSocket(std::vector<std::shared_ptr<NodeSocket>> &container,
+                    NodeSocket *socket) {
+    auto it = std::find_if(container.begin(), container.end(),
+                           [&](const auto &it) { return it.get() == socket; });
+    assert(it != container.end() && "Socket not found");
+    container.erase(it);
+    updateSockets();
+  }
+
 public:
   NodeBase(const QString &name = "", QGraphicsItem *parent = nullptr);
 
@@ -63,26 +83,20 @@ public:
   }
 
   /// Add an input socket.
-  template <typename... Args>
-  std::shared_ptr<NodeSocket> addInput(const QString &name, NodeType type,
-                                       Args &&...args) {
-    auto socket = std::make_shared<NodeInputSocket>(
-        name, type, this, this, std::forward<Args>(args)...);
-    inputs.push_back(socket);
-    updateSockets();
-    return socket;
+  std::shared_ptr<NodeSocket> addInput(const QString &name, NodeType type) {
+    return addSocket<NodeInputSocket>(name, inputs, type);
   }
 
   /// Add an output socket.
-  template <typename... Args>
-  std::shared_ptr<NodeSocket> addOutput(const QString &name, NodeType type,
-                                        Args &&...args) {
-    auto socket = std::make_shared<NodeOutputSocket>(
-        name, type, this, this, std::forward<Args>(args)...);
-    outputs.push_back(socket);
-    updateSockets();
-    return socket;
+  std::shared_ptr<NodeSocket> addOutput(const QString &name, NodeType type) {
+    return addSocket<NodeOutputSocket>(name, outputs, type);
   }
+
+  /// Remove an input socket.
+  void removeInput(NodeSocket *socket) { removeSocket(inputs, socket); }
+
+  /// Remove an output socket.
+  void removeOutput(NodeSocket *socket) { removeSocket(outputs, socket); }
 
   void setName(const QString &name) override;
 

@@ -1,8 +1,7 @@
+#include "mlir-viewer/InitDefaultTransforms.h"
 #include "mlir-viewer/mainwindow.h"
 
 #include <QApplication>
-
-#include "mlir-viewer/graph/MLIRModuleLoader.h"
 
 #include "circt/Conversion/Passes.h"
 #include "circt/InitAllDialects.h"
@@ -21,10 +20,6 @@
 /// erased, private, and .cpp containing logic, which is impossible to even hack
 /// our way through to inspect.
 void initTransforms(TransformsRegistry &registry) {
-  registry.registerTransformation<MLIRModuleLoader>();
-  registry.registerTransformation(
-      "Passthrough", NodeType(TypeKind::AnyMLIR), NodeType(TypeKind::AnyMLIR),
-      [](mlir::OpPassManager &pm) { assert(false && "how do we do this?"); });
   registry.registerTransformation(
       "mlir-clang", NodeType({TypeKind::C, TypeKind::CPP}),
       NodeType(TypeKind::AnyMLIR),
@@ -65,6 +60,7 @@ int main(int argc, char *argv[]) {
 
   TransformsRegistry registry;
   initTransforms(registry);
+  initDefaultTransforms(registry);
   MainWindow w(context, registry);
   w.showMaximized();
   return a.exec();

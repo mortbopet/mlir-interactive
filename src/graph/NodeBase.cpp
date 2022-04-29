@@ -45,7 +45,7 @@ void NodeBase::updateSockets() {
   }
   indent = -rect.width() / 2 + botDiff;
   for (auto &&socket : outputs) {
-    socket->setPos(0, y);
+    socket->setPos(indent, y);
     indent += botDiff;
   }
 }

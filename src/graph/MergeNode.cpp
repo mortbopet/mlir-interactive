@@ -10,6 +10,7 @@ using namespace mlir;
 
 MergeNode::MergeNode(QGraphicsItem *parent) : NodeBase("Merge", parent) {
   numInputsChanged(1);
+  numInputsChanged(2);
   addOutput("Output", NodeType(TypeKind::AnyMLIR));
 }
 

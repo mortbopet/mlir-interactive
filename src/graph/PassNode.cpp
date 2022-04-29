@@ -1,12 +1,12 @@
-#include "mlir-viewer/graph/TransformNode.h"
+#include "mlir-viewer/graph/PassNode.h"
 
 #include "mlir/Pass/PassManager.h"
 
 using namespace mlir;
 
-void TransformNode::addToPipeline(mlir::OpPassManager &pm) { nester(pm); }
+void PassNode::addToPipeline(mlir::OpPassManager &pm) { nester(pm); }
 
-ProcessResult TransformNode::process(ProcessInput processInput) {
+ProcessResult PassNode::process(ProcessInput processInput) {
   auto inputModule = dynamic_cast<InflightModule *>(processInput.input);
   assert(inputModule && "expected module input");
   ModuleOp module = inputModule->getValue()->get();

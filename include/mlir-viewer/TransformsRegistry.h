@@ -5,7 +5,7 @@
 #include <map>
 
 #include "mlir-viewer/NodeTypes.h"
-#include "mlir-viewer/graph/TransformNode.h"
+#include "mlir-viewer/graph/PassNode.h"
 
 class NodeBase;
 
@@ -34,7 +34,7 @@ public:
                               NodeType output,
                               const PassManagerNester &nester) {
     registerTransformation(
-        name, TransformNode::getBuilder(input, output, name, nester));
+        name, PassNode::getBuilder(input, output, name, nester));
   }
 
   const NodeBuilder &getBuilder(const QString &name) const {

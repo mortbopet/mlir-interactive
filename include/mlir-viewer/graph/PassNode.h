@@ -16,7 +16,7 @@ using PassManagerNester = std::function<void(mlir::OpPassManager &)>;
 
 /// A TransformNode is able to ingest an IRNode and transform it into some other
 /// IR node.
-class TransformNode : public NodeBase {
+class PassNode : public NodeBase {
 public:
   using NodeBase::NodeBase;
 
@@ -27,7 +27,7 @@ public:
                                 const QString &name,
                                 const PassManagerNester &nester) {
     return [=]() -> NodeBase * {
-      TransformNode *node = new TransformNode(name);
+      PassNode *node = new PassNode(name);
       node->addInput("input", inputType);
       node->addOutput("output", outputType);
       node->nester = nester;

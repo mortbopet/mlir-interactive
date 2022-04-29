@@ -38,4 +38,8 @@ void MergeNode::createUI(QVBoxLayout *layout) {
 
 QString MergeNode::description() const { return "Merge"; }
 
-ProcessResult MergeNode::process(ProcessInput processInput) { return {}; }
+ProcessResult MergeNode::process(ProcessInput processInput) {
+  return {
+
+  };
+}

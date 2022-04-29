@@ -21,7 +21,7 @@
 #include "mlir-viewer/PassExecuter.h"
 #include "mlir-viewer/Scene.h"
 #include "mlir-viewer/graph/MLIRModuleLoader.h"
-#include "mlir-viewer/graph/TransformNode.h"
+#include "mlir-viewer/graph/PassNode.h"
 
 void clearLayout(QLayout *layout) {
   // Clear focuslayout

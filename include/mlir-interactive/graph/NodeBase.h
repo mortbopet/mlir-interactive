@@ -14,6 +14,8 @@
 #include <string>
 #include <vector>
 
+// A mapping from an input node socket to a result incoming on its connected
+// edge.
 using InflightNodeInputMapping =
     std::map<NodeSocket *, std::shared_ptr<InflightResultBase>>;
 struct ProcessInput {

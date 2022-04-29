@@ -75,3 +75,24 @@ Scene::Serialization Scene::getSerialization() const {
   }
   return s;
 }
+
+static void nodeSortUtil(NodeBase *node, std::vector<NodeBase *> &sorted,
+                         std::set<NodeBase *> &visited) {
+  if (visited.find(node) != visited.end())
+    return;
+  visited.insert(node);
+  for (auto &inputSocket : node->getInputs()) {
+    nodeSortUtil(inputSocket->getEdge()->getStartSocket()->getNode(), sorted,
+                 visited);
+  }
+  sorted.push_back(node);
+}
+
+std::vector<NodeBase *> Scene::getNodesSorted() {
+  std::vector<NodeBase *> sorted;
+  std::set<NodeBase *> visited;
+  for (auto *node : itemsOfType<NodeBase>())
+    nodeSortUtil(node, sorted, visited);
+
+  return sorted;
+}

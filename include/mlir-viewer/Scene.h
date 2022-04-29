@@ -9,6 +9,7 @@
 class BaseItem;
 class NodeSocket;
 class PassExecuter;
+class NodeBase;
 class IRState;
 
 class Scene : public QGraphicsScene {
@@ -32,6 +33,9 @@ public:
   /// Called after a pass execution cycle has finished, and the UI should be
   /// updated to reflect the resulting state.
   void executionFinished();
+
+  /// Returns a topologically sorted list of nodes in this graph.
+  std::vector<NodeBase *> getNodesSorted();
 
   struct Serialization {
     struct Node {

@@ -14,9 +14,10 @@
 #include <string>
 #include <vector>
 
+using InflightNodeInputMapping = std::map<NodeSocket *, InflightResultBase *>;
 struct ProcessInput {
   mlir::MLIRContext &context;
-  InflightResultBase *input;
+  InflightNodeInputMapping input;
 };
 
 template <typename TInner>

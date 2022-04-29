@@ -7,9 +7,9 @@
 #include <llvm/ADT/Any.h>
 
 #include "mlir-viewer/IRState.h"
+#include "mlir-viewer/graph/NodeBase.h"
 
 class Scene;
-class NodeBase;
 class InflightResultBase;
 
 namespace mlir {
@@ -25,7 +25,9 @@ public:
   std::optional<IRState> getState(void *item);
 
 private:
-  void executeNode(NodeBase *node, InflightResultBase *input);
+  ProcessResult
+  executeNode(NodeBase *node,
+              std::map<NodeBase *, InflightNodeInputMapping> &nodeInputs);
   std::map<void *, IRState> IRStates;
   mlir::MLIRContext &context;
 

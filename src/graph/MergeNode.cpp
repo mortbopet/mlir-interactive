@@ -4,6 +4,10 @@
 #include <QLabel>
 #include <QSpinBox>
 
+#include "mlir/IR/Builders.h"
+
+using namespace mlir;
+
 MergeNode::MergeNode(QGraphicsItem *parent) : NodeBase("Merge", parent) {
   numInputsChanged(1);
   addOutput("Output", NodeType(TypeKind::AnyMLIR));
@@ -39,7 +43,23 @@ void MergeNode::createUI(QVBoxLayout *layout) {
 QString MergeNode::description() const { return "Merge"; }
 
 ProcessResult MergeNode::process(ProcessInput processInput) {
-  return {
+  // Build the new module contain all merged modules.
+  OpBuilder builder(&processInput.context);
+  auto mergedModule = builder.create<mlir::ModuleOp>(mlir::Location({}));
+  auto mergedModuleRef =
+      std::make_unique<mlir::OwningOpRef<mlir::ModuleOp>>(mergedModule);
 
-  };
+  // Inline all of the input modules.
+  for (auto &inputSocket : getInputs()) {
+    auto inflightModule = dynamic_cast<InflightModule *>(
+        processInput.input.at(inputSocket.get()));
+    assert(inflightModule && "expected module input");
+    ModuleOp inputModule = inflightModule->getValue()->get();
+
+    for (auto &op : *inputModule.getBody())
+      op.moveAfter(inputModule.getBody(),
+                   inputModule.getBody()->back().getIterator());
+  }
+  return ResultMapping{{getOutput(0), std::make_shared<InflightModule>(
+                                          std::move(mergedModuleRef))}};
 }

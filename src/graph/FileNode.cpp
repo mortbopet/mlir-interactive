@@ -53,7 +53,7 @@ SourceFileNode::SourceFileNode(const QString &filename, QGraphicsItem *parent)
 QString SourceFileNode::description() const { return "Loads a file."; }
 
 ProcessResult SourceFileNode::process(ProcessInput processInput) {
-  assert(processInput.input == nullptr && "Input to a source node?");
+  assert(processInput.input.size() == 0 && "Input to a source node?");
   std::string errorMessage;
   auto input = mlir::openInputFile(filename.toStdString(), &errorMessage);
   if (!input) {

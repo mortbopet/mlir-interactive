@@ -14,7 +14,8 @@
 #include <string>
 #include <vector>
 
-using InflightNodeInputMapping = std::map<NodeSocket *, InflightResultBase *>;
+using InflightNodeInputMapping =
+    std::map<NodeSocket *, std::shared_ptr<InflightResultBase>>;
 struct ProcessInput {
   mlir::MLIRContext &context;
   InflightNodeInputMapping input;
@@ -80,7 +81,7 @@ public:
   template <typename SocketType = NodeInputSocket>
   SocketType *getInput(int index) {
     assert(inputs.size() > index);
-    return static_cast<SocketType *>(outputs.at(index).get());
+    return static_cast<SocketType *>(inputs.at(index).get());
   }
 
   /// Add an input socket.

@@ -34,8 +34,10 @@ public:
   /// updated to reflect the resulting state.
   void executionFinished();
 
-  /// Returns a topologically sorted list of nodes in this graph.
-  std::vector<NodeBase *> getNodesSorted();
+  /// Returns a topologically sorted list of nodes in this graph. If
+  /// fromSourceNodesOnly, will only start traversing the node graph starting
+  /// from source nodes.
+  std::vector<NodeBase *> getNodesSorted(bool fromSourceNodesOnly);
 
   struct Serialization {
     struct Node {

@@ -100,7 +100,7 @@ bool NodeSocket::isCompatible(NodeSocket *from) {
     return false;
 
   // Already connected?
-  if (getEdge())
+  if (hasEdge())
     return false;
 
   return getType().isCompatible(from->getType());

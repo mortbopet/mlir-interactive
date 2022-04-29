@@ -9,6 +9,10 @@ Edge::Edge(NodeOutputSocket *startSocket)
 }
 
 void Edge::setEndSocket(NodeInputSocket *endSocket) {
+  // It is a precondition that the endsocket has already been registered as an
+  // owner of this socket.
+  if (endSocket)
+    assert(endSocket->getEdge().get() == this);
   this->endSocket = endSocket;
   drawLineBetweenSockets();
   edgeChanged();

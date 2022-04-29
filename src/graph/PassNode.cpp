@@ -8,7 +8,7 @@ void PassNode::addToPipeline(mlir::OpPassManager &pm) { nester(pm); }
 
 ProcessResult PassNode::process(ProcessInput processInput) {
   auto inputModule =
-      dynamic_cast<InflightModule *>(processInput.input.at(getInput(0)));
+      dynamic_cast<InflightModule *>(processInput.input.at(getInput(0)).get());
   assert(inputModule && "expected module input");
   ModuleOp module = inputModule->getValue()->get();
 

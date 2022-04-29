@@ -50,8 +50,9 @@ QString MLIRModuleLoader::description() const {
 }
 
 ProcessResult MLIRModuleLoader::process(ProcessInput processInput) {
+  NodeSocket *in = getInput(0);
   auto memBfr =
-      dynamic_cast<InflightSource *>(processInput.input.at(getInput(0)));
+      dynamic_cast<InflightSource *>(processInput.input.at(getInput(0)).get());
   assert(memBfr && "Expected memory buffer as input!");
   llvm::SourceMgr sourceMgr;
   sourceMgr.AddNewSourceBuffer(std::move(memBfr->getValue()), llvm::SMLoc());

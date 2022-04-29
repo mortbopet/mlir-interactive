@@ -28,7 +28,10 @@ public:
                       const QVariant &value) override;
 
   bool hasEdge() { return static_cast<bool>(edge); }
-  const std::shared_ptr<Edge> &getEdge() { return edge; }
+  const std::shared_ptr<Edge> &getEdge() {
+    assert(edge);
+    return edge;
+  }
   void setEdge(std::shared_ptr<Edge> edge);
   void clearEdge();
   bool isConnected() const { return static_cast<bool>(edge); }

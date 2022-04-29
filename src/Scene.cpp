@@ -82,17 +82,23 @@ static void nodeSortUtil(NodeBase *node, std::vector<NodeBase *> &sorted,
     return;
   visited.insert(node);
   for (auto &inputSocket : node->getInputs()) {
+    if (!inputSocket->hasEdge())
+      continue;
     nodeSortUtil(inputSocket->getEdge()->getStartSocket()->getNode(), sorted,
                  visited);
   }
   sorted.push_back(node);
 }
 
-std::vector<NodeBase *> Scene::getNodesSorted() {
+std::vector<NodeBase *> Scene::getNodesSorted(bool fromSourceNodesOnly) {
   std::vector<NodeBase *> sorted;
   std::set<NodeBase *> visited;
-  for (auto *node : itemsOfType<NodeBase>())
+  for (auto *node : itemsOfType<NodeBase>()) {
+    if (fromSourceNodesOnly && !node->isSource())
+      continue;
+
     nodeSortUtil(node, sorted, visited);
+  }
 
   return sorted;
 }

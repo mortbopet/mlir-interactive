@@ -30,7 +30,7 @@ void initTransforms(TransformsRegistry &registry) {
                                     pm.addPass(mlir::createLowerAffinePass());
                                   });
   registry.registerTransformation(
-      "Standard to Handshake", NodeType(TypeKind::Standard),
+      "Standard to Handshake", NodeType(TypeKind::AnyMLIR),
       NodeType(TypeKind::Handshake), [](mlir::OpPassManager &pm) {
         pm.addPass(circt::createStandardToHandshakePass());
       });

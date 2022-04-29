@@ -25,9 +25,8 @@ public:
   std::optional<IRState> getState(void *item);
 
 private:
-  ProcessResult
-  executeNode(NodeBase *node,
-              std::map<NodeBase *, InflightNodeInputMapping> &nodeInputs);
+  void executeNode(NodeBase *node,
+                   std::map<NodeBase *, InflightNodeInputMapping> &nodeInputs);
   std::map<void *, IRState> IRStates;
   mlir::MLIRContext &context;
 

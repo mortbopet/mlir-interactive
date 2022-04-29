@@ -43,23 +43,36 @@ void MergeNode::createUI(QVBoxLayout *layout) {
 QString MergeNode::description() const { return "Merge"; }
 
 ProcessResult MergeNode::process(ProcessInput processInput) {
+
+  auto iterateInputModules = [&](const std::function<void(ModuleOp)> &f) {
+    for (auto &inputSocket : getInputs()) {
+      auto inflightModule = dynamic_cast<InflightModule *>(
+          processInput.input.at(inputSocket.get()).get());
+      assert(inflightModule && "expected module input");
+      ModuleOp inputModule = inflightModule->getValue()->get();
+      f(inputModule);
+    }
+  };
+
+  // Build a fused location from all source modules.
+  SmallVector<Location> locations;
+  iterateInputModules(
+      [&](ModuleOp inputModule) { locations.push_back(inputModule.getLoc()); });
+  auto loc = FusedLoc::get(&processInput.context, locations);
+
   // Build the new module contain all merged modules.
   OpBuilder builder(&processInput.context);
-  auto mergedModule = builder.create<mlir::ModuleOp>(mlir::Location({}));
+  auto mergedModule = builder.create<mlir::ModuleOp>(loc);
   auto mergedModuleRef =
       std::make_unique<mlir::OwningOpRef<mlir::ModuleOp>>(mergedModule);
 
   // Inline all of the input modules.
-  for (auto &inputSocket : getInputs()) {
-    auto inflightModule = dynamic_cast<InflightModule *>(
-        processInput.input.at(inputSocket.get()));
-    assert(inflightModule && "expected module input");
-    ModuleOp inputModule = inflightModule->getValue()->get();
+  iterateInputModules([&](ModuleOp inputModule) {
+    Block *source = inputModule.getBody();
+    Block *dest = mergedModule.getBody();
+    dest->getOperations().splice(dest->end(), source->getOperations());
+  });
 
-    for (auto &op : *inputModule.getBody())
-      op.moveAfter(inputModule.getBody(),
-                   inputModule.getBody()->back().getIterator());
-  }
   return ResultMapping{{getOutput(0), std::make_shared<InflightModule>(
                                           std::move(mergedModuleRef))}};
 }

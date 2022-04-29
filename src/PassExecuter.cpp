@@ -23,7 +23,7 @@ PassExecuter::PassExecuter(mlir::MLIRContext &context) : context(context) {
   });
 }
 
-ProcessResult PassExecuter::executeNode(
+void PassExecuter::executeNode(
     NodeBase *node,
     std::map<NodeBase *, InflightNodeInputMapping> &nodeInputs) {
   auto result = node->process(ProcessInput{context, nodeInputs[node]});
@@ -33,31 +33,40 @@ ProcessResult PassExecuter::executeNode(
     IRStates[node] = IRState(errorMessage, /*isError=*/true);
     diagnostic.clear();
   } else {
-    // Report IR state on output sockets and prepare inputs for connected output
-    // nodes.
     for (auto &&[outputSocket, outputRes] : result.getValue()) {
+      // Report IR state on output sockets
       IRStates[outputSocket] = outputRes->toString();
-      auto *endSocket = outputSocket->getEdge()->getEndSocket();
-      nodeInputs[endSocket->getNode()][endSocket] = outputRes.get();
+      if (!outputSocket->hasEdge())
+        continue;
+
+      // prepare inputs for connected output nodes.
+      NodeSocket *endSocket = outputSocket->getEdge()->getEndSocket();
+      NodeBase *endNode = endSocket->getNode();
+      nodeInputs[endNode][endSocket] = outputRes;
+
+      // If a connected node has all inputs available, execute it.
+      if (llvm::all_of(endNode->getInputs(), [&](auto &inputSocket) {
+            return nodeInputs[endNode].count(inputSocket.get());
+          }))
+        executeNode(endNode, nodeInputs);
     }
   }
-  return result;
+
+  // Drop the node input buffer since it's no longer needed.
+  nodeInputs.erase(node);
 }
 
 void PassExecuter::execute(Scene &scene) {
   // Topologically sort the graph.
   // @todo: this obviously assumes a DAG, which might not always be the case!
-  std::vector<NodeBase *> sortedNodes = scene.getNodesSorted();
+  std::vector<NodeBase *> sortedNodes =
+      scene.getNodesSorted(/*skipUnconnected=*/true);
   std::map<NodeBase *, InflightNodeInputMapping> nodeInputs;
 
   // Go execute!
-  for (auto *node : sortedNodes) {
-    auto result = executeNode(node, nodeInputs);
-    if (failed(result))
-      break;
-
-    // Drop the node input buffer since it's no longer needed.
-    nodeInputs.erase(node);
+  for (auto *node : scene.itemsOfType<NodeBase>()) {
+    if (node->isSource())
+      executeNode(node, nodeInputs);
   }
 
   scene.executionFinished();
